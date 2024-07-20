@@ -1,5 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+
+import 'auth_service.dart';
+import 'home_page.dart';
+import 'login_page.dart';
 
 // import 'firebase_options.dart';
 
@@ -29,21 +35,42 @@ void main() async {
   );
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Firebase Setup',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Firebase Setup Complete'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthService>(
+          create: (_) => AuthService(),
         ),
-        body: const Center(
-          child: Text('Firebase is successfully configured on your app'),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Login',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
+        home: AuthWrapper(),
       ),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    return StreamBuilder<User?>(
+      stream: authService.user,
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          final User? user = snapshot.data;
+          return user == null ? LoginPage() : HomePage();
+        } else {
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+      },
     );
   }
 }
