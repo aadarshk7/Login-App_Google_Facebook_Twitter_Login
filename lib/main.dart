@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Login',
         theme: ThemeData(
           primarySwatch: Colors.blue,
