@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # login_app
 
 A new Flutter project.
@@ -14,3 +15,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Login-App
+>>>>>>> 86b9f11692654754db4f2ba1baf8eef78875922a
