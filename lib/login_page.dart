@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 20),
                   TextButton(
                     onPressed: () {},
-                    child: Text('Forgot password?')
+                    child: Text('Forgot password?'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
