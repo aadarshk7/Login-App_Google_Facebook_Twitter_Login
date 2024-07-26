@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {},
                       ),
                       IconButton(
-                        icon: Image.asset('assets/google.png'),
+                        icon: Image.asset('assets/images/google.png'),
                         onPressed: () {},
                       ),
                     ],
