@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       IconButton(
-                        icon: Image.asset('assets/facebook.png'),
+                        icon: Image.asset('assets/images/facebook.png'),
                         onPressed: () {},
                       ),
                       IconButton(
