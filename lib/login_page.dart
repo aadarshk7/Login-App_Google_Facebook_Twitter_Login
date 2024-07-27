@@ -27,13 +27,12 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Container(
                   height: 300,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/car.jpg'),
-                      fit: BoxFit.cover,
-                    ),
+                  // decoration: BoxDecoration(
+                  //   image: DecorationImage(
+                  //     image: AssetImage('assets/images/car.jpg'),
+                  //     fit: BoxFit.cover,
+                  //   ),
                   ),
-                ),
                 Positioned(
                   left: 20,
                   top: 50,
