@@ -95,16 +95,16 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                        icon: Image.asset('assets/images/facebook.png'),
-                        onPressed: () {
-
-                        },
-                      ),
-                      IconButton(
-                        icon: Image.asset('assets/images/google.png'),
-                        onPressed: () {},
-                      ),
+                      // IconButton(
+                      //   icon: Image.asset('assets/images/facebook.png'),
+                      //   onPressed: () {
+                      //
+                      //   },
+                      // ),
+                      // IconButton(
+                      //   icon: Image.asset('assets/images/google.png'),
+                      //   onPressed: () {},
+                      // ),
                     ],
                   ),
                   SizedBox(height: 20),
