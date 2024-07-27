@@ -13,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+  //  final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
       appBar: AppBar(

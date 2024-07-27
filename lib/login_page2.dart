@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class LoginPage2 extends StatefulWidget {
   const LoginPage2({super.key});
 
@@ -8,6 +11,9 @@ class LoginPage2 extends StatefulWidget {
 class _LoginPage2State extends State<LoginPage2> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+
+
+    );
   }
 }
