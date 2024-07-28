@@ -69,21 +69,23 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     obscureText: true,
                   ),
+
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 3.0), backgroundColor: Colors.blue,
+                       padding: EdgeInsets.all(15), backgroundColor: Colors.blue,
+                      // padding: EdgeInsets.fromLTRB(77, 20, 30, 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(17),
                       ),
                     ),
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,
-                      child: Text(
+                      child: const Text(
                         'Sign In',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ),
                   ),
