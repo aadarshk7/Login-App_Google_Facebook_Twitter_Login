@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(77.0),
+              padding: const EdgeInsets.all(55.0),
               child: Column(
                 children: <Widget>[
                   TextField(
