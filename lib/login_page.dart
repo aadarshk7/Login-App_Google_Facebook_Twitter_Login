@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
             Stack(
               children: <Widget>[
                 Container(
-                  height: 300,
+                  height: 20,
                   // decoration: BoxDecoration(
                   //   image: DecorationImage(
                   //     image: AssetImage('assets/images/car.jpg'),
