@@ -33,18 +33,7 @@ class _LoginPageState extends State<LoginPage> {
                   //     fit: BoxFit.cover,
                   //   ),
                   ),
-                Positioned(
-                  left: 33,
-                  top: 50,
-                  child: Text(
-                    '',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+
               ],
             ),
             Padding(
