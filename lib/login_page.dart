@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
                   //   ),
                   ),
                 Positioned(
-                  left: 20,
+                  left: 33,
                   top: 50,
                   child: Text(
                     '',
