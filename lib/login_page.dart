@@ -25,6 +25,10 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Stack(
               children: <Widget>[
+
+                Container(
+                  height: 100,
+                )
                 // Container(
                 //   height: 20,
                 //   // decoration: BoxDecoration(
@@ -74,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                       padding: EdgeInsets.all(15), backgroundColor: Colors.blue,
+                       padding: EdgeInsets.all(12), backgroundColor: Colors.blue,
                       // padding: EdgeInsets.fromLTRB(77, 20, 30, 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(17),
@@ -92,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 20),
                   TextButton(
                     onPressed: () {},
-                    child: Text('Forgot password?'),
+                    child: Text('Forgot password?', style: TextStyle(fontSize:15)),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -115,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: RichText(
                       text: TextSpan(
                         text: 'Don\'t have an account? ',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(fontSize:15,color: Colors.black),
                         children: [
                           TextSpan(
                             text: 'Sign Up',
