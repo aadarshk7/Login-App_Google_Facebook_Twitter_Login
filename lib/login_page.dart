@@ -26,29 +26,29 @@ class _LoginPageState extends State<LoginPage> {
             Stack(
               children: <Widget>[
 
-                Container(
-                  height: 100,
-                )
                 // Container(
-                //   height: 20,
-                //   // decoration: BoxDecoration(
-                //   //   image: DecorationImage(
-                //   //     image: AssetImage('assets/images/car.jpg'),
-                //   //     fit: BoxFit.cover,
-                //   //   ),
-                //   ),
-                // Positioned(
-                //   left: 33,
-                //   top: 50,
-                //   child: Text(
-                //     '',
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 30,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
+                //   height: 100,
+                // )
+                Container(
+                  height: 20,
+                  // decoration: BoxDecoration(
+                  //   image: DecorationImage(
+                  //     image: AssetImage('assets/images/car.jpg'),
+                  //     fit: BoxFit.cover,
+                  //   ),
+                  ),
+                Positioned(
+                  left: 33,
+                  top: 50,
+                  child: Text(
+                    '',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ],
             ),
             Padding(
