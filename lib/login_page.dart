@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
             Stack(
               children: <Widget>[
                 Container(
-                  height: 300,
+                  height: 377,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/logo.jpg'),
@@ -29,12 +29,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const Positioned(
-                  left: 20,
-                  top: 40,
+                  left: 128,
+                  top: 339,
                   child: Text(
-                    '',
+                    'Login App',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
