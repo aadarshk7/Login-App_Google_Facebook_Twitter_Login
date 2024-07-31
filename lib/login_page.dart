@@ -20,10 +20,10 @@ class _LoginPageState extends State<LoginPage> {
             Stack(
               children: <Widget>[
                 Container(
-                  height: 200,
+                  height: 300,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/mainimg.png'),
+                      image: AssetImage('assets/images/logo.png'),
                       fit: BoxFit.contain,
                     ),
                   ),
