@@ -13,32 +13,23 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-  //  final authService = Provider.of<AuthService>(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Stack(
               children: <Widget>[
-
-                // Container(
-                //   height: 100,
-                // )
                 Container(
-                  height: 20,
-                  // decoration: BoxDecoration(
-                  //   image: DecorationImage(
-                  //     image: AssetImage('assets/images/car.jpg'),
-                  //     fit: BoxFit.cover,
-                  //   ),
+                  height: 300,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/facebook.jpg'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
+                ),
                 Positioned(
-                  left: 33,
+                  left: 20,
                   top: 50,
                   child: Text(
                     '',
@@ -52,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(55.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: <Widget>[
                   TextField(
@@ -73,44 +64,34 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     obscureText: true,
                   ),
-
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                       padding: EdgeInsets.all(12), backgroundColor: Colors.blue,
-                      // padding: EdgeInsets.fromLTRB(77, 20, 30, 20),
+                      padding: EdgeInsets.symmetric(vertical: 16.0), backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(17),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,
-                      child: const Text(
+                      child: Text(
                         'Sign In',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                        style: TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
                   SizedBox(height: 20),
                   TextButton(
                     onPressed: () {},
-                    child: Text('Forgot password?', style: TextStyle(fontSize:15)),
+                    child: Text('Forgot password?'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      // IconButton(
-                      //   icon: Image.asset('assets/images/facebook.png'),
-                      //   onPressed: () {
-                      //
-                      //   },
-                      // ),
-                      // IconButton(
-                      //   icon: Image.asset('assets/images/google.png'),
-                      //   onPressed: () {},
-                      // ),
+                      _buildSocialMediaButton('assets/facebook.png'),
+                      _buildSocialMediaButton('assets/google.png'),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -119,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: RichText(
                       text: TextSpan(
                         text: 'Don\'t have an account? ',
-                        style: TextStyle(fontSize:15,color: Colors.black),
+                        style: TextStyle(color: Colors.black),
                         children: [
                           TextSpan(
                             text: 'Sign Up',
@@ -133,6 +114,20 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaButton(String assetName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        width: 50,
+        height: 50,
+        child: IconButton(
+          icon: Image.asset(assetName),
+          onPressed: () {},
         ),
       ),
     );
