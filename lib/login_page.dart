@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/loginimg.jpeg'),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(44.0),
               child: Column(
                 children: <Widget>[
                   TextField(
@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.center,
                       child: Text(
                         'Sign In',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),
