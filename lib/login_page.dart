@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 300,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/facebook.jpg'),
+                      image: AssetImage('assets/images/loginimg.jpeg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -90,8 +90,11 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _buildSocialMediaButton('assets/facebook.png'),
-                      _buildSocialMediaButton('assets/google.png'),
+                      _buildSocialMediaButton('assets/images/xlogo.png'),
+                      _buildSocialMediaButton('assets/images/facebooklogopng.png'),
+                      _buildSocialMediaButton('assets/images/googlelogo.png'),
+                      _buildSocialMediaButton('assets/images/github.png'),
+
                     ],
                   ),
                   SizedBox(height: 20),
