@@ -21,14 +21,14 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Container(
                   height: 300,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/mainimg.png'),
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
-                Positioned(
+                const Positioned(
                   left: 20,
                   top: 50,
                   child: Text(
