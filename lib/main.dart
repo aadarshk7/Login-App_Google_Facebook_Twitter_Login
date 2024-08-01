@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +11,21 @@ import 'login_page.dart';
 // import 'firebase_options.dart';flutter
 
 // Code to connect with firebase databases
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if(kIsWeb){
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyA0Q6ESxvyDTBys_jEGkuEofPX74mwCbs4",
+          authDomain: "loginapp-87017.firebaseapp.com",
+          projectId: "loginapp-87017",
+          storageBucket: "loginapp-87017.appspot.com",
+          messagingSenderId: "939288879280",
+          appId: "1:939288879280:web:55e90537025b14526bdb75",
+          measurementId: "G-FREWCBF7Y1"
+      )
+    );
+  };
 // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   const firebaseConfig = {
     'apiKey': "AIzaSyDx24fU-veTw_QttLg5mzgAJiDrYXv1EOM",
