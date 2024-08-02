@@ -1,76 +1,64 @@
 import 'dart:convert';
+
+import '../utils/config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_login/twitter_login.dart';
-import 'package:http/http.dart' as http;
-import '../utils/config.dart';
 
 class SignInProvider extends ChangeNotifier {
   // instance of firebaseauth, facebook and google
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FacebookAuth facebookAuth = FacebookAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final twitterLogin = TwitterLogin(
+      apiKey: Config.apikey_twitter,
+      apiSecretKey: Config.secretkey_twitter,
+      redirectURI: "socialauth://");
 
-  // final twitterLogin = TwitterLogin(
-  //   //     apiKey: Config.apikey_twitter,
-  //   //     apiSecretKey: Config.secretkey_twitter,
-  //   //     redirectURI: "socialauth://");
-
-  bool _isSignIn = false;
-
-  bool get isSignIn => _isSignIn;
+  bool _isSignedIn = false;
+  bool get isSignedIn => _isSignedIn;
 
   //hasError, errorCode, provider,uid, email, name, imageUrl
   bool _hasError = false;
-
   bool get hasError => _hasError;
 
   String? _errorCode;
-
   String? get errorCode => _errorCode;
 
   String? _provider;
-
   String? get provider => _provider;
 
   String? _uid;
-
   String? get uid => _uid;
 
   String? _name;
-
   String? get name => _name;
 
   String? _email;
-
   String? get email => _email;
 
   String? _imageUrl;
-
   String? get imageUrl => _imageUrl;
 
   SignInProvider() {
     checkSignInUser();
   }
 
-  get twitterLogin => null;
-
   Future checkSignInUser() async {
     final SharedPreferences s = await SharedPreferences.getInstance();
-    _isSignIn = s.getBool("signed_in") ?? false;
+    _isSignedIn = s.getBool("signed_in") ?? false;
     notifyListeners();
   }
 
   Future setSignIn() async {
     final SharedPreferences s = await SharedPreferences.getInstance();
     s.setBool("signed_in", true);
-    _isSignIn = true;
+    _isSignedIn = true;
     notifyListeners();
   }
 
@@ -172,61 +160,49 @@ class SignInProvider extends ChangeNotifier {
   }
 
   // sign in with facebook
-  // Future<void> signInWithFacebook() async {
-  //   final LoginResult result = await FacebookAuth.instance.login();
+  // Future signInWithFacebook() async {
+  //   final LoginResult result = await facebookAuth.login();
+  //   // getting the profile
+  //   final graphResponse = await http.get(Uri.parse(
+  //       'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=${result.accessToken!.token}'));
+  //
+  //   final profile = jsonDecode(graphResponse.body);
   //
   //   if (result.status == LoginStatus.success) {
-  //     final AccessToken accessToken = result.accessToken!;
-  //
-  //     // Check the properties of accessToken
-  //     print('Access Token: ${accessToken.token}'); // Print the token to verify
-  //
-  //     // Use the correct way to access the token
-  //     final token = accessToken.token;
-  //
-  //     // Getting the profile
-  //     final graphResponse = await http.get(Uri.parse(
-  //       'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=$token',
-  //     ));
-  //
-  //     final profile = jsonDecode(graphResponse.body);
-  //
-  //     if (graphResponse.statusCode == 200) {
-  //       try {
-  //         final OAuthCredential credential =
-  //             FacebookAuthProvider.credential(token);
-  //         await FirebaseAuth.instance.signInWithCredential(credential);
-  //
-  //         // Saving the values
-  //         _name = profile['name'];
-  //         _email = profile['email'];
-  //         _imageUrl = profile['picture']['data']['url'];
-  //         _uid = profile['id'];
-  //         _hasError = false;
-  //         _provider = "FACEBOOK";
-  //         notifyListeners();
-  //       } on FirebaseAuthException catch (e) {
-  //         switch (e.code) {
-  //           case "account-exists-with-different-credential":
-  //             _errorCode =
-  //                 "You already have an account with us. Use the correct provider.";
-  //             _hasError = true;
-  //             notifyListeners();
-  //             break;
-  //           default:
-  //             _errorCode = "Some unexpected error occurred: ${e.message}";
-  //             _hasError = true;
-  //             notifyListeners();
-  //         }
-  //       }
-  //     } else {
-  //       _hasError = true;
-  //       _errorCode = profile['error']['message'];
+  //     try {
+  //       final OAuthCredential credential =
+  //           FacebookAuthProvider.credential(result.accessToken!.token);
+  //       await firebaseAuth.signInWithCredential(credential);
+  //       // saving the values
+  //       _name = profile['name'];
+  //       _email = profile['email'];
+  //       _imageUrl = profile['picture']['data']['url'];
+  //       _uid = profile['id'];
+  //       _hasError = false;
+  //       _provider = "FACEBOOK";
   //       notifyListeners();
+  //     } on FirebaseAuthException catch (e) {
+  //       switch (e.code) {
+  //         case "account-exists-with-different-credential":
+  //           _errorCode =
+  //               "You already have an account with us. Use correct provider";
+  //           _hasError = true;
+  //           notifyListeners();
+  //           break;
+  //
+  //         case "null":
+  //           _errorCode = "Some unexpected error while trying to sign in";
+  //           _hasError = true;
+  //           notifyListeners();
+  //           break;
+  //         default:
+  //           _errorCode = e.toString();
+  //           _hasError = true;
+  //           notifyListeners();
+  //       }
   //     }
   //   } else {
   //     _hasError = true;
-  //     _errorCode = "Failed to login with Facebook.";
   //     notifyListeners();
   //   }
   // }
@@ -298,7 +274,7 @@ class SignInProvider extends ChangeNotifier {
     await googleSignIn.signOut();
     await facebookAuth.logOut();
 
-    _isSignIn = false;
+    _isSignedIn = false;
     notifyListeners();
     // clear all storage information
     clearStoredData();

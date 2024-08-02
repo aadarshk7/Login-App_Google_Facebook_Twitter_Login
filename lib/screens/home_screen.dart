@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../provider/sign_in_provider.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/next_screen.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
