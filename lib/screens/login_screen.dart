@@ -1,17 +1,32 @@
 import 'dart:ui';
-
+import '../utils/next_screen.dart';
+import '../utils/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/internet_provider.dart';
 import '../provider/sign_in_provider.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // handle after signin
+  handleAfterSignIn() {
+    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+      nextScreenReplace(context, const HomeScreen());
+    });
+  }
+
+  // Future<void> handleAfterSignIn() async {
+  //   // Implement the actions to be taken after a successful sign-in
+  //   Navigator.pushReplacementNamed(context, '/HomeScreen');
+  // }
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -83,16 +98,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Container(
                       width: double.infinity,
                       alignment: Alignment.center,
-                      child: Text(
+                      child: const Text(
                         'Sign In',
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {},
-                    child: Text('Forgot password?'),
+                    child: const Text('Forgot password?'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -136,9 +151,46 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void handleGoogleSignIn() {
-    final provider = Provider.of<SignInProvider>(context, listen: false);
-    provider.signInWithGoogle();
+  // handling google sign in
+  Future handleGoogleSignIn() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+      googleController.clear();
+    } else {
+      await sp.signInWithGoogle().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
+          googleController.clear();
+        } else {
+          // checking whether user exists or not
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              // user exists
+              if (sp.uid != null) {
+                await sp.getUserDataFromFirestore(sp.uid!).then((value) => sp
+                    .saveDataToSharedPreferences()
+                    .then((value) => sp.setSignIn().then((value) {
+                          googleController.clear();
+                          handleAfterSignIn();
+                        })));
+              }
+            } else {
+              // user does not exist
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        googleController.clear();
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
   }
 
   Widget _buildSocialMediaButton(String assetName,

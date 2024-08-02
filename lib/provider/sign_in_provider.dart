@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -11,6 +12,8 @@ class SignInProvider extends ChangeNotifier {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FacebookAuth facebookAuth = FacebookAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // final twitterLogin = TwitterLogin(
   //   //     apiKey: Config.apikey_twitter,
@@ -52,6 +55,31 @@ class SignInProvider extends ChangeNotifier {
 
   SignInProvider() {
     checkSignInUser();
+  }
+
+  Future<void> setSignIn() async {
+    _isSignIn = true;
+    notifyListeners();
+  }
+
+  Future<void> saveDataToFirestore() async {
+    try {
+      await _firestore.collection('users').doc(_uid).set({
+        'name': _name,
+        'email': _email,
+        'imageUrl': _imageUrl,
+        'provider': _provider,
+      });
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<bool> checkUserExists() async {
+    DocumentSnapshot snap = await _firestore.collection('users').doc(uid).get();
+    return snap.exists;
   }
 
   Future checkSignInUser() async {
@@ -114,5 +142,55 @@ class SignInProvider extends ChangeNotifier {
       _hasError = true;
       notifyListeners();
     }
+  }
+
+  Future<void> getUserDataFromFirestore(String uid) async {
+    try {
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(uid).get();
+      if (snap.exists) {
+        _name = snap['name'];
+        _email = snap['email'];
+        _imageUrl = snap['imageUrl'];
+        _provider = snap['provider'];
+        notifyListeners();
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
+  // Define the getDataFromSharedPreferences method
+  Future<void> getDataFromSharedPreferences() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    _name = sp.getString('name');
+    _email = sp.getString('email');
+    _imageUrl = sp.getString('imageUrl');
+    _provider = sp.getString('provider');
+    _uid = sp.getString('uid');
+    notifyListeners();
+  }
+
+  Future<void> saveDataToSharedPreferences() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    await sp.setString('name', _name ?? '');
+    await sp.setString('email', _email ?? '');
+    await sp.setString('imageUrl', _imageUrl ?? '');
+    await sp.setString('provider', _provider ?? '');
+    await sp.setString('uid', _uid ?? '');
+    await sp.setBool('isSignIn', true);
+    notifyListeners();
+  }
+
+// Define the userSignOut method
+  Future<void> userSignOut() async {
+    await googleSignIn.signOut();
+    await firebaseAuth.signOut();
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.clear();
+    _isSignIn = false;
+    notifyListeners();
   }
 }
