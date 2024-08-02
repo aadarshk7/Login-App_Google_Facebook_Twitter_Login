@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ElevatedButton(
                 onPressed: () {
                   sp.userSignOut();
-                  nextScreenReplace(context, const LoginScreen());
+                  nextScreenReplace(context, LoginScreen());
                 },
                 child: const Text("SIGNOUT",
                     style: TextStyle(

@@ -1,19 +1,32 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
 
-class LoginPage extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
+class LoginPage extends StatelessWidget {
+  final String userName;
+  LoginPage({Key? key, required this.userName}) : super(key: key);
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(userName),
+        actions: [
+          IconButton(
+            // icon: const Icon(Icons.logout),
+            onPressed: () async {
+              GoogleSignIn().signOut();
+              FirebaseAuth.instance.signOut();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -39,6 +52,9 @@ class _LoginPageState extends State<LoginPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+                Center(
+                  child: Text('Welcome, $userName!!'),
                 ),
               ],
             ),
@@ -68,7 +84,8 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16.0), backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -91,10 +108,10 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       _buildSocialMediaButton('assets/images/xlogo.png'),
-                      _buildSocialMediaButton('assets/images/facebooklogopng.png'),
+                      _buildSocialMediaButton(
+                          'assets/images/facebooklogopng.png'),
                       _buildSocialMediaButton('assets/images/googlelogo.png'),
                       _buildSocialMediaButton('assets/images/github.png'),
-
                     ],
                   ),
                   SizedBox(height: 20),

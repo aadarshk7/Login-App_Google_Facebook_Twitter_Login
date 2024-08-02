@@ -30,7 +30,7 @@ class GradientScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Center(
                 child: Text(
-                  'Login Screen',
+                  'Gradient Screen',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,

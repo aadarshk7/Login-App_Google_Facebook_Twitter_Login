@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:login_app/provider/internet_provider.dart';
 import 'package:login_app/provider/sign_in_provider.dart';
+import 'package:login_app/screens/google_screen.dart';
 import 'package:login_app/screens/gradient_screen.dart';
-import 'package:login_app/screens/home_screen.dart';
+import 'package:login_app/screens/google_screen.dart';
 import 'package:login_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -30,15 +31,16 @@ Future main() async {
             measurementId: "G-FREWCBF7Y1"));
   }
   ;
+
 // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  const firebaseConfig = {
-    'apiKey': "AIzaSyDx24fU-veTw_QttLg5mzgAJiDrYXv1EOM",
-    'authDomain': "loginapp-87017.firebaseapp.com",
-    'projectId': "loginapp-87017",
-    'storageBucket': "loginapp-87017.appspot.com",
-    'messagingSenderId': "939288879280",
-    'appId': "1:939288879280:web:939288879280",
-  };
+//   const firebaseConfig = {
+//     'apiKey': "AIzaSyDx24fU-veTw_QttLg5mzgAJiDrYXv1EOM",
+//     'authDomain': "loginapp-87017.firebaseapp.com",
+//     'projectId': "loginapp-87017",
+//     'storageBucket': "loginapp-87017.appspot.com",
+//     'messagingSenderId': "939288879280",
+//     'appId': "1:939288879280:web:939288879280",
+//   };
 
   await Firebase.initializeApp(
     options: const FirebaseOptions(
@@ -51,6 +53,7 @@ Future main() async {
       projectId: "loginapp-87017", // project id here
     ),
   );
+
   runApp(MyApp());
 }
 
@@ -59,18 +62,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: ((context) => SignInProvider()),
-        ),
-        ChangeNotifierProvider(
-          create: ((context) => InternetProvider()),
-        ),
-      ],
-      child: const MaterialApp(
-        home: SplashScreen(),
-        debugShowCheckedModeBanner: false,
+    // return MultiProvider(
+    //     providers: [
+    //     ChangeNotifierProvider(
+    //     create: ((context)
+    // =>
+    //     SignInProvider()
+    // ),
+    // ),
+    // ChangeNotifierProvider(
+    // create: ((context) => InternetProvider()),
+    // ),
+    // ],
+    // ),
+    // Update the parameter name in the MaterialApp widget
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data == null) {
+              return Googlescreen();
+            } else {
+              return LoginPage(
+                  userName: FirebaseAuth.instance.currentUser!
+                      .displayName!); // Corrected parameter name
+            }
+          }
+          return Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
