@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:login_app/provider/internet_provider.dart';
 import 'package:login_app/provider/sign_in_provider.dart';
 import 'package:login_app/screens/gradient_screen.dart';
+import 'package:login_app/screens/home_screen.dart';
 import 'package:login_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -67,7 +68,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SplashScreen(),
+        home: HomeScreen(),
       ),
     );
   }
