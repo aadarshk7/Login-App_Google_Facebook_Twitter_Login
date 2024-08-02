@@ -50,4 +50,56 @@ class SignInProvider extends ChangeNotifier {
     _isSignIn = sp.getBool('isSignIn') ?? false;
     notifyListeners();
   }
+
+  // sign in with google
+  Future signInWithGoogle() async {
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      // executing our authentication
+      try {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        // signing to firebase user instance
+        final User userDetails =
+            (await firebaseAuth.signInWithCredential(credential)).user!;
+
+        // now save all values
+        _name = userDetails.displayName;
+        _email = userDetails.email;
+        _imageUrl = userDetails.photoURL;
+        _provider = "GOOGLE";
+        _uid = userDetails.uid;
+        notifyListeners();
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "account-exists-with-different-credential":
+            _errorCode =
+                "You already have an account with us. Use correct provider";
+            _hasError = true;
+            notifyListeners();
+            break;
+
+          case "null":
+            _errorCode = "Some unexpected error while trying to sign in";
+            _hasError = true;
+            notifyListeners();
+            break;
+          default:
+            _errorCode = e.toString();
+            _hasError = true;
+            notifyListeners();
+        }
+      }
+    } else {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
 }
