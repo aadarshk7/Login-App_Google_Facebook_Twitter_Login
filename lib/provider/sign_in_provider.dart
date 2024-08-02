@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:twitter_login/twitter_login.dart';
+import 'package:http/http.dart' as http;
 import '../utils/config.dart';
 
 class SignInProvider extends ChangeNotifier {
@@ -57,34 +60,18 @@ class SignInProvider extends ChangeNotifier {
     checkSignInUser();
   }
 
-  Future<void> setSignIn() async {
-    _isSignIn = true;
+  get twitterLogin => null;
+
+  Future checkSignInUser() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    _isSignIn = s.getBool("signed_in") ?? false;
     notifyListeners();
   }
 
-  Future<void> saveDataToFirestore() async {
-    try {
-      await _firestore.collection('users').doc(_uid).set({
-        'name': _name,
-        'email': _email,
-        'imageUrl': _imageUrl,
-        'provider': _provider,
-      });
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-      notifyListeners();
-    }
-  }
-
-  Future<bool> checkUserExists() async {
-    DocumentSnapshot snap = await _firestore.collection('users').doc(uid).get();
-    return snap.exists;
-  }
-
-  Future checkSignInUser() async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    _isSignIn = sp.getBool('isSignIn') ?? false;
+  Future setSignIn() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    s.setBool("signed_in", true);
+    _isSignIn = true;
     notifyListeners();
   }
 
@@ -122,11 +109,7 @@ class SignInProvider extends ChangeNotifier {
             _hasError = true;
             notifyListeners();
             break;
-          case "invalid-credential":
-            _errorCode = "Some unexpected error while trying to sign in";
-            _hasError = true;
-            notifyListeners();
-            break; // Handle this case
+
           case "null":
             _errorCode = "Some unexpected error while trying to sign in";
             _hasError = true;
@@ -144,53 +127,191 @@ class SignInProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getUserDataFromFirestore(String uid) async {
-    try {
-      DocumentSnapshot snap =
-          await _firestore.collection('users').doc(uid).get();
-      if (snap.exists) {
-        _name = snap['name'];
-        _email = snap['email'];
-        _imageUrl = snap['imageUrl'];
-        _provider = snap['provider'];
+  // sign in with twitter
+  Future signInWithTwitter() async {
+    final authResult = await twitterLogin.loginV2();
+    if (authResult.status == TwitterLoginStatus.loggedIn) {
+      try {
+        final credential = TwitterAuthProvider.credential(
+            accessToken: authResult.authToken!,
+            secret: authResult.authTokenSecret!);
+        await firebaseAuth.signInWithCredential(credential);
+
+        final userDetails = authResult.user;
+        // save all the data
+        _name = userDetails!.name;
+        _email = firebaseAuth.currentUser!.email;
+        _imageUrl = userDetails.thumbnailImage;
+        _uid = userDetails.id.toString();
+        _provider = "TWITTER";
+        _hasError = false;
         notifyListeners();
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "account-exists-with-different-credential":
+            _errorCode =
+                "You already have an account with us. Use correct provider";
+            _hasError = true;
+            notifyListeners();
+            break;
+
+          case "null":
+            _errorCode = "Some unexpected error while trying to sign in";
+            _hasError = true;
+            notifyListeners();
+            break;
+          default:
+            _errorCode = e.toString();
+            _hasError = true;
+            notifyListeners();
+        }
       }
-    } catch (e) {
+    } else {
       _hasError = true;
-      _errorCode = e.toString();
       notifyListeners();
     }
   }
 
-  // Define the getDataFromSharedPreferences method
-  Future<void> getDataFromSharedPreferences() async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    _name = sp.getString('name');
-    _email = sp.getString('email');
-    _imageUrl = sp.getString('imageUrl');
-    _provider = sp.getString('provider');
-    _uid = sp.getString('uid');
+  // sign in with facebook
+  Future<void> signInWithFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      final AccessToken? accessToken = result.accessToken;
+      // getting the profile
+      final graphResponse = await http.get(Uri.parse(
+          'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=${accessToken!.token}'));
+
+      final profile = jsonDecode(graphResponse.body);
+
+      if (graphResponse.statusCode == 200) {
+        try {
+          final OAuthCredential credential =
+              FacebookAuthProvider.credential(accessToken.token);
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          // saving the values
+          _name = profile['name'];
+          _email = profile['email'];
+          _imageUrl = profile['picture']['data']['url'];
+          _uid = profile['id'];
+          _hasError = false;
+          _provider = "FACEBOOK";
+          notifyListeners();
+        } on FirebaseAuthException catch (e) {
+          switch (e.code) {
+            case "account-exists-with-different-credential":
+              _errorCode =
+                  "You already have an account with us. Use the correct provider";
+              _hasError = true;
+              notifyListeners();
+              break;
+
+            case "null":
+              _errorCode = "Some unexpected error while trying to sign in";
+              _hasError = true;
+              notifyListeners();
+              break;
+            default:
+              _errorCode = e.toString();
+              _hasError = true;
+              notifyListeners();
+          }
+        }
+      } else {
+        _hasError = true;
+        _errorCode = profile['error']['message'];
+        notifyListeners();
+      }
+    } else {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
+
+  // ENTRY FOR CLOUDFIRESTORE
+  Future getUserDataFromFirestore(uid) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((DocumentSnapshot snapshot) => {
+              _uid = snapshot['uid'],
+              _name = snapshot['name'],
+              _email = snapshot['email'],
+              _imageUrl = snapshot['image_url'],
+              _provider = snapshot['provider'],
+            });
+  }
+
+  Future saveDataToFirestore() async {
+    final DocumentReference r =
+        FirebaseFirestore.instance.collection("users").doc(uid);
+    await r.set({
+      "name": _name,
+      "email": _email,
+      "uid": _uid,
+      "image_url": _imageUrl,
+      "provider": _provider,
+    });
     notifyListeners();
   }
 
-  Future<void> saveDataToSharedPreferences() async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    await sp.setString('name', _name ?? '');
-    await sp.setString('email', _email ?? '');
-    await sp.setString('imageUrl', _imageUrl ?? '');
-    await sp.setString('provider', _provider ?? '');
-    await sp.setString('uid', _uid ?? '');
-    await sp.setBool('isSignIn', true);
+  Future saveDataToSharedPreferences() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    await s.setString('name', _name!);
+    await s.setString('email', _email!);
+    await s.setString('uid', _uid!);
+    await s.setString('image_url', _imageUrl!);
+    await s.setString('provider', _provider!);
     notifyListeners();
   }
 
-// Define the userSignOut method
-  Future<void> userSignOut() async {
+  Future getDataFromSharedPreferences() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    _name = s.getString('name');
+    _email = s.getString('email');
+    _imageUrl = s.getString('image_url');
+    _uid = s.getString('uid');
+    _provider = s.getString('provider');
+    notifyListeners();
+  }
+
+  // checkUser exists or not in cloudfirestore
+  Future<bool> checkUserExists() async {
+    DocumentSnapshot snap =
+        await FirebaseFirestore.instance.collection('users').doc(_uid).get();
+    if (snap.exists) {
+      print("EXISTING USER");
+      return true;
+    } else {
+      print("NEW USER");
+      return false;
+    }
+  }
+
+  // signout
+  Future userSignOut() async {
+    await firebaseAuth.signOut;
     await googleSignIn.signOut();
-    await firebaseAuth.signOut();
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    sp.clear();
+    await facebookAuth.logOut();
+
     _isSignIn = false;
+    notifyListeners();
+    // clear all storage information
+    clearStoredData();
+  }
+
+  Future clearStoredData() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    s.clear();
+  }
+
+  void phoneNumberUser(User user, email, name) {
+    _name = name;
+    _email = email;
+    _imageUrl =
+        "https://winaero.com/blog/wp-content/uploads/2017/12/User-icon-256-blue.png";
+    _uid = user.phoneNumber;
+    _provider = "PHONE";
     notifyListeners();
   }
 }
