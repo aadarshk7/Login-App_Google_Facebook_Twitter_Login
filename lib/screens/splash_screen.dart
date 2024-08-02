@@ -7,6 +7,7 @@ import '../utils/config.dart';
 import '../utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import "package:flutter/src/painting/text_style.dart" as ts;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -63,21 +64,19 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: Text(
                   'Login App',
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
                     foreground: Paint()
-                      ..shader = const LinearGradient(
+                      ..shader = LinearGradient(
                         colors: <Color>[
                           Colors.red,
-                          Colors.blue,
+                          Colors.green,
                         ],
                       ).createShader(
-                        const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0),
-                      ),
+                          const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
                   ),
                 ),
-              )
+              ),
 
               // const Center(
               //   child: Text(

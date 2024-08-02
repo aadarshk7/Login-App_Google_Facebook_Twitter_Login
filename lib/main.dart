@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'home_page.dart';
 import 'login_page.dart';
-
+import "package:flutter/src/painting/text_style.dart" as ts;
 // import 'firebase_options.dart';flutter
 
 // Code to connect with firebase databases
