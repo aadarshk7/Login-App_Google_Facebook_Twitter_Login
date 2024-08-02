@@ -55,20 +55,22 @@ Future main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => InternetProvider()),
-        ChangeNotifierProvider(create: (_) => SignInProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Login',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        ChangeNotifierProvider(
+          create: ((context) => SignInProvider()),
         ),
-        home: HomeScreen(),
+        ChangeNotifierProvider(
+          create: ((context) => InternetProvider()),
+        ),
+      ],
+      child: const MaterialApp(
+        home: SplashScreen(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
