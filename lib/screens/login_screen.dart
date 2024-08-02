@@ -3,11 +3,11 @@ import '../utils/next_screen.dart';
 import '../utils/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// Removed the import for rounded_loading_button
 import '../provider/internet_provider.dart';
 import '../provider/sign_in_provider.dart';
 import 'home_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,24 +17,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // handle after signin
-  // handleAfterSignIn() {
-  //   Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-  //     nextScreenReplace(context, const HomeScreen());
-  //   });
-  // }
-
-  // Future<void> handleAfterSignIn() async {
-  //   // Implement the actions to be taken after a successful sign-in
-  //   Navigator.pushReplacementNamed(context, '/HomeScreen');
-  // }
-  final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
-  final RoundedLoadingButtonController googleController =
-      RoundedLoadingButtonController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  // final googleController = TextEditingController();
+  // Remove RoundedLoadingButtonController
+  // final RoundedLoadingButtonController googleController = RoundedLoadingButtonController();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: <Widget>[
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       hintText: 'Email',
                       border: OutlineInputBorder(
@@ -81,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20),
                   TextField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                       hintText: 'Password',
                       border: OutlineInputBorder(
@@ -115,16 +103,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      RoundedLoadingButton(
+                      ElevatedButton(
                         onPressed: () {
                           handleGoogleSignIn();
                         },
-                        controller: googleController,
-                        successColor: Colors.red,
-                        width: MediaQuery.of(context).size.width * 0.80,
-                        elevation: 0,
-                        borderRadius: 25,
-                        color: Colors.red,
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
                         child: Wrap(
                           children: const [
                             Icon(
@@ -135,59 +124,60 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               width: 15,
                             ),
-                            Text("Sign in with Google",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500)),
+                            Text(
+                              "Sign in with Google",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Forgot password?'),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildSocialMediaButton('assets/images/xlogo.png',
-                          onPressed: () {}),
-                      _buildSocialMediaButton(
-                          'assets/images/facebooklogopng.png', onPressed: () {
-                        handleGoogleSignIn();
-                      }),
-                      _buildSocialMediaButton('assets/images/googlelogo.png',
-                          onPressed: () {
-                        // Call the Google sign-in method
-                        handleGoogleSignIn();
-                      }),
-                      _buildSocialMediaButton('assets/images/github.png',
-                          onPressed: () {}),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {},
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Don\'t have an account? ',
-                        style: TextStyle(color: Colors.black),
-                        children: [
-                          TextSpan(
-                            text: 'Sign Up',
-                            style: TextStyle(color: Colors.blue),
-                          ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text('Forgot password?'),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          _buildSocialMediaButton('assets/images/xlogo.png',
+                              onPressed: () {}),
+                          _buildSocialMediaButton(
+                              'assets/images/facebooklogopng.png',
+                              onPressed: () {
+                            handleGoogleSignIn();
+                          }),
+                          _buildSocialMediaButton(
+                              'assets/images/googlelogo.png', onPressed: () {
+                            // Call the Google sign-in method
+                            handleGoogleSignIn();
+                          }),
+                          _buildSocialMediaButton('assets/images/github.png',
+                              onPressed: () {}),
                         ],
                       ),
-                    ),
+                      SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () {},
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Don\'t have an account? ',
+                            style: TextStyle(color: Colors.black),
+                            children: [
+                              TextSpan(
+                                text: 'Sign Up',
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -198,7 +188,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // handling google sign in
   Future handleGoogleSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
@@ -206,31 +195,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
-      googleController.reset();
+      // googleController.reset(); // No need for controller reset
     } else {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
-          googleController.reset();
+          // googleController.reset();
         } else {
-          // checking whether user exists or not
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              // user exists
               if (sp.uid != null) {
                 await sp.getUserDataFromFirestore(sp.uid!).then((value) => sp
                     .saveDataToSharedPreferences()
                     .then((value) => sp.setSignIn().then((value) {
-                          googleController.reset();
+                          // googleController.reset();
                           handleAfterSignIn();
                         })));
               }
             } else {
-              // user does not exist
               sp.saveDataToFirestore().then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignIn().then((value) {
-                        googleController.success();
+                        // googleController.reset();
                         handleAfterSignIn();
                       })));
             }
@@ -240,7 +226,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // handle after signin
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
       nextScreenReplace(context, const HomeScreen());
