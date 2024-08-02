@@ -37,13 +37,61 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xffFFC3A0),
+              Color(0xff4e5cbc),
+              Color(0xff1066b8),
+            ],
+          ),
+        ),
         child: Center(
-            child: Image(
-          image: AssetImage(Config.app_icon),
-          height: 80,
-          width: 80,
-        )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/mainimg.png',
+                height: 100,
+                width: 100,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Login App',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()
+                      ..shader = const LinearGradient(
+                        colors: <Color>[
+                          Colors.red,
+                          Colors.blue,
+                        ],
+                      ).createShader(
+                        const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0),
+                      ),
+                  ),
+                ),
+              )
+
+              // const Center(
+              //   child: Text(
+              //     'Login Screen',
+              //     style: TextStyle(
+              //       fontSize: 30,
+              //       fontWeight: FontWeight.bold,
+              //       color: Colors.white,
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+        ),
       ),
     );
   }

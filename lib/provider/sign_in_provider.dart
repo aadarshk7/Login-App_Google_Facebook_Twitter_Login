@@ -9,8 +9,8 @@ class SignInProvider extends ChangeNotifier {
   }
 
   Future checkSignInUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _isSignIn = prefs.getBool('isSignIn') ?? false;
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    _isSignIn = sp.getBool('isSignIn') ?? false;
     notifyListeners();
   }
 }
