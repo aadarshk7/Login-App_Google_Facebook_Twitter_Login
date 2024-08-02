@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../provider/internet_provider.dart';
 import '../provider/sign_in_provider.dart';
 import 'home_screen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -26,11 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
   //   // Implement the actions to be taken after a successful sign-in
   //   Navigator.pushReplacementNamed(context, '/HomeScreen');
   // }
-
+  final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
+  final RoundedLoadingButtonController googleController =
+      RoundedLoadingButtonController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final googleController = TextEditingController();
+  // final googleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      handleGoogleSignIn();
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       backgroundColor: Colors.blue,
@@ -105,6 +111,46 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RoundedLoadingButton(
+                        onPressed: () {
+                          handleGoogleSignIn();
+                        },
+                        controller: googleController,
+                        successColor: Colors.red,
+                        width: MediaQuery.of(context).size.width * 0.80,
+                        elevation: 0,
+                        borderRadius: 25,
+                        color: Colors.red,
+                        child: Wrap(
+                          children: const [
+                            Icon(
+                              FontAwesomeIcons.google,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Text("Sign in with Google",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   TextButton(
                     onPressed: () {},
                     child: const Text('Forgot password?'),
@@ -160,12 +206,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
-      googleController.clear();
+      googleController.reset();
     } else {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
-          googleController.clear();
+          googleController.reset();
         } else {
           // checking whether user exists or not
           sp.checkUserExists().then((value) async {
@@ -175,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 await sp.getUserDataFromFirestore(sp.uid!).then((value) => sp
                     .saveDataToSharedPreferences()
                     .then((value) => sp.setSignIn().then((value) {
-                          googleController.clear();
+                          googleController.reset();
                           handleAfterSignIn();
                         })));
               }
@@ -184,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
               sp.saveDataToFirestore().then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignIn().then((value) {
-                        googleController.clear();
+                        googleController.success();
                         handleAfterSignIn();
                       })));
             }

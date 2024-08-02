@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -173,59 +172,64 @@ class SignInProvider extends ChangeNotifier {
   }
 
   // sign in with facebook
-  Future<void> signInWithFacebook() async {
-    final LoginResult result = await FacebookAuth.instance.login();
-    if (result.status == LoginStatus.success) {
-      final AccessToken? accessToken = result.accessToken;
-      // getting the profile
-      final graphResponse = await http.get(Uri.parse(
-          'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=${accessToken!.token}'));
-
-      final profile = jsonDecode(graphResponse.body);
-
-      if (graphResponse.statusCode == 200) {
-        try {
-          final OAuthCredential credential =
-              FacebookAuthProvider.credential(accessToken.token);
-          await FirebaseAuth.instance.signInWithCredential(credential);
-          // saving the values
-          _name = profile['name'];
-          _email = profile['email'];
-          _imageUrl = profile['picture']['data']['url'];
-          _uid = profile['id'];
-          _hasError = false;
-          _provider = "FACEBOOK";
-          notifyListeners();
-        } on FirebaseAuthException catch (e) {
-          switch (e.code) {
-            case "account-exists-with-different-credential":
-              _errorCode =
-                  "You already have an account with us. Use the correct provider";
-              _hasError = true;
-              notifyListeners();
-              break;
-
-            case "null":
-              _errorCode = "Some unexpected error while trying to sign in";
-              _hasError = true;
-              notifyListeners();
-              break;
-            default:
-              _errorCode = e.toString();
-              _hasError = true;
-              notifyListeners();
-          }
-        }
-      } else {
-        _hasError = true;
-        _errorCode = profile['error']['message'];
-        notifyListeners();
-      }
-    } else {
-      _hasError = true;
-      notifyListeners();
-    }
-  }
+  // Future<void> signInWithFacebook() async {
+  //   final LoginResult result = await FacebookAuth.instance.login();
+  //
+  //   if (result.status == LoginStatus.success) {
+  //     final AccessToken accessToken = result.accessToken!;
+  //
+  //     // Check the properties of accessToken
+  //     print('Access Token: ${accessToken.token}'); // Print the token to verify
+  //
+  //     // Use the correct way to access the token
+  //     final token = accessToken.token;
+  //
+  //     // Getting the profile
+  //     final graphResponse = await http.get(Uri.parse(
+  //       'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=$token',
+  //     ));
+  //
+  //     final profile = jsonDecode(graphResponse.body);
+  //
+  //     if (graphResponse.statusCode == 200) {
+  //       try {
+  //         final OAuthCredential credential =
+  //             FacebookAuthProvider.credential(token);
+  //         await FirebaseAuth.instance.signInWithCredential(credential);
+  //
+  //         // Saving the values
+  //         _name = profile['name'];
+  //         _email = profile['email'];
+  //         _imageUrl = profile['picture']['data']['url'];
+  //         _uid = profile['id'];
+  //         _hasError = false;
+  //         _provider = "FACEBOOK";
+  //         notifyListeners();
+  //       } on FirebaseAuthException catch (e) {
+  //         switch (e.code) {
+  //           case "account-exists-with-different-credential":
+  //             _errorCode =
+  //                 "You already have an account with us. Use the correct provider.";
+  //             _hasError = true;
+  //             notifyListeners();
+  //             break;
+  //           default:
+  //             _errorCode = "Some unexpected error occurred: ${e.message}";
+  //             _hasError = true;
+  //             notifyListeners();
+  //         }
+  //       }
+  //     } else {
+  //       _hasError = true;
+  //       _errorCode = profile['error']['message'];
+  //       notifyListeners();
+  //     }
+  //   } else {
+  //     _hasError = true;
+  //     _errorCode = "Failed to login with Facebook.";
+  //     notifyListeners();
+  //   }
+  // }
 
   // ENTRY FOR CLOUDFIRESTORE
   Future getUserDataFromFirestore(uid) async {
