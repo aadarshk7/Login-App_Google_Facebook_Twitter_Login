@@ -115,8 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       _buildSocialMediaButton('assets/images/xlogo.png',
                           onPressed: () {}),
                       _buildSocialMediaButton(
-                          'assets/images/facebooklogopng.png',
-                          onPressed: () {}),
+                          'assets/images/facebooklogopng.png', onPressed: () {
+                        handleGoogleSignIn();
+                      }),
                       _buildSocialMediaButton('assets/images/googlelogo.png',
                           onPressed: () {
                         // Call the Google sign-in method
