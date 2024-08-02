@@ -1,14 +1,21 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../provider/internet_provider.dart';
+import '../provider/sign_in_provider.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final googleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +97,18 @@ class _LoginPageState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _buildSocialMediaButton('assets/images/xlogo.png'),
+                      _buildSocialMediaButton('assets/images/xlogo.png',
+                          onPressed: () {}),
                       _buildSocialMediaButton(
-                          'assets/images/facebooklogopng.png'),
-                      _buildSocialMediaButton('assets/images/googlelogo.png'),
-                      _buildSocialMediaButton('assets/images/github.png'),
+                          'assets/images/facebooklogopng.png',
+                          onPressed: () {}),
+                      _buildSocialMediaButton('assets/images/googlelogo.png',
+                          onPressed: () {
+                        // Call the Google sign-in method
+                        handleGoogleSignIn();
+                      }),
+                      _buildSocialMediaButton('assets/images/github.png',
+                          onPressed: () {}),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -122,7 +136,13 @@ class _LoginPageState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSocialMediaButton(String assetName) {
+  void handleGoogleSignIn() {
+    final provider = Provider.of<SignInProvider>(context, listen: false);
+    provider.signInWithGoogle();
+  }
+
+  Widget _buildSocialMediaButton(String assetName,
+      {required VoidCallback onPressed}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
@@ -130,7 +150,7 @@ class _LoginPageState extends State<LoginScreen> {
         height: 50,
         child: IconButton(
           icon: Image.asset(assetName),
-          onPressed: () {},
+          onPressed: onPressed,
         ),
       ),
     );

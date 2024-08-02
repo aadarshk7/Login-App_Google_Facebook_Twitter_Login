@@ -1,19 +1,20 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
-class InternetProvider with ChangeNotifier {
-  final Connectivity _connectivity = Connectivity();
-  bool _isOnline = false;
+class InternetProvider extends ChangeNotifier {
+  bool _hasInternet = false;
+  bool get hasInternet => _hasInternet;
 
-  bool get isOnline => _isOnline;
+  InternetProvider() {
+    checkInternetConnection();
+  }
 
-  Future<void> checkInternet() async {
-    final ConnectivityResult result =
-        (await _connectivity.checkConnectivity()) as ConnectivityResult;
+  Future checkInternetConnection() async {
+    var result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.none) {
-      _isOnline = false;
+      _hasInternet = false;
     } else {
-      _isOnline = true;
+      _hasInternet = true;
     }
     notifyListeners();
   }

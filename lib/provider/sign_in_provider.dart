@@ -94,7 +94,11 @@ class SignInProvider extends ChangeNotifier {
             _hasError = true;
             notifyListeners();
             break;
-
+          case "invalid-credential":
+            _errorCode = "Some unexpected error while trying to sign in";
+            _hasError = true;
+            notifyListeners();
+            break; // Handle this case
           case "null":
             _errorCode = "Some unexpected error while trying to sign in";
             _hasError = true;
