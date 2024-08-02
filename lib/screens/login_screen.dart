@@ -7,7 +7,6 @@ import '../utils/next_screen.dart';
 import '../utils/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,14 +18,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
-  final RoundedLoadingButtonController googleController =
-      RoundedLoadingButtonController();
-  final RoundedLoadingButtonController facebookController =
-      RoundedLoadingButtonController();
-  final RoundedLoadingButtonController twitterController =
-      RoundedLoadingButtonController();
-  final RoundedLoadingButtonController phoneController =
-      RoundedLoadingButtonController();
 
   @override
   Widget build(BuildContext context) {
@@ -67,22 +58,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-
-            // roundedbutton
+            // Replace RoundedLoadingButton with ElevatedButton
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RoundedLoadingButton(
-                  onPressed: () {
-                    handleGoogleSignIn();
-                  },
-                  controller: googleController,
-                  successColor: Colors.red,
-                  width: MediaQuery.of(context).size.width * 0.80,
-                  elevation: 0,
-                  borderRadius: 25,
-                  color: Colors.red,
+                ElevatedButton(
+                  onPressed: handleGoogleSignIn,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.red,
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width * 0.80, 50),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
                   child: Wrap(
                     children: const [
                       Icon(
@@ -104,17 +96,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                // facebook login button
-                RoundedLoadingButton(
-                  onPressed: () {
-                    handleFacebookAuth();
-                  },
-                  controller: facebookController,
-                  successColor: Colors.blue,
-                  width: MediaQuery.of(context).size.width * 0.80,
-                  elevation: 0,
-                  borderRadius: 25,
-                  color: Colors.blue,
+                // Facebook login button
+                ElevatedButton(
+                  onPressed: handleFacebookAuth,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width * 0.80, 50),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
                   child: Wrap(
                     children: const [
                       Icon(
@@ -136,18 +130,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-
-                // twitter loading button
-                RoundedLoadingButton(
-                  onPressed: () {
-                    handleTwitterAuth();
-                  },
-                  controller: twitterController,
-                  successColor: Colors.lightBlue,
-                  width: MediaQuery.of(context).size.width * 0.80,
-                  elevation: 0,
-                  borderRadius: 25,
-                  color: Colors.lightBlue,
+                // Twitter login button
+                ElevatedButton(
+                  onPressed: handleTwitterAuth,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.lightBlue,
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width * 0.80, 50),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
                   child: Wrap(
                     children: const [
                       Icon(
@@ -169,19 +164,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-
-                // phoneAuth loading button
-                RoundedLoadingButton(
+                // Phone Auth login button
+                ElevatedButton(
                   onPressed: () {
                     nextScreenReplace(context, const HomeScreen());
-                    phoneController.reset();
                   },
-                  controller: phoneController,
-                  successColor: Colors.black,
-                  width: MediaQuery.of(context).size.width * 0.80,
-                  elevation: 0,
-                  borderRadius: 25,
-                  color: Colors.black,
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.black,
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width * 0.80, 50),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
                   child: Wrap(
                     children: const [
                       Icon(
@@ -201,54 +198,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       )),
     );
   }
 
-  // handling twitter auth
-  Future handleTwitterAuth() async {
-    final sp = context.read<SignInProvider>();
-    final ip = context.read<InternetProvider>();
-    await ip.checkInternetConnection();
-
-    if (ip.hasInternet == false) {
-      openSnackbar(context, "Check your Internet connection", Colors.red);
-      googleController.reset();
-    } else {
-      await sp.signInWithTwitter().then((value) {
-        if (sp.hasError == true) {
-          openSnackbar(context, sp.errorCode.toString(), Colors.red);
-          twitterController.reset();
-        } else {
-          // checking whether user exists or not
-          sp.checkUserExists().then((value) async {
-            if (value == true) {
-              // user exists
-              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
-                  .saveDataToSharedPreferences()
-                  .then((value) => sp.setSignIn().then((value) {
-                        twitterController.success();
-                        handleAfterSignIn();
-                      })));
-            } else {
-              // user does not exist
-              sp.saveDataToFirestore().then((value) => sp
-                  .saveDataToSharedPreferences()
-                  .then((value) => sp.setSignIn().then((value) {
-                        twitterController.success();
-                        handleAfterSignIn();
-                      })));
-            }
-          });
-        }
-      });
-    }
-  }
-
-  // handling google sigin in
   Future handleGoogleSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
@@ -256,29 +212,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
-      googleController.reset();
     } else {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
-          googleController.reset();
         } else {
-          // checking whether user exists or not
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              // user exists
-              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
-                  .saveDataToSharedPreferences()
-                  .then((value) => sp.setSignIn().then((value) {
-                        googleController.success();
-                        handleAfterSignIn();
-                      })));
+              if (sp.uid != null) {
+                await sp.getUserDataFromFirestore(sp.uid!).then((value) => sp
+                    .saveDataToSharedPreferences()
+                    .then((value) => sp.setSignIn().then((value) {
+                          handleAfterSignIn();
+                        })));
+              }
             } else {
-              // user does not exist
               sp.saveDataToFirestore().then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignIn().then((value) {
-                        googleController.success();
                         handleAfterSignIn();
                       })));
             }
@@ -288,8 +239,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // handling facebookauth
-  // handling google sigin in
   Future handleFacebookAuth() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
@@ -297,29 +246,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
-      facebookController.reset();
     } else {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
-          facebookController.reset();
         } else {
-          // checking whether user exists or not
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              // user exists
               await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignIn().then((value) {
-                        facebookController.success();
                         handleAfterSignIn();
                       })));
             } else {
-              // user does not exist
               sp.saveDataToFirestore().then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignIn().then((value) {
-                        facebookController.success();
                         handleAfterSignIn();
                       })));
             }
@@ -329,7 +271,38 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // handle after signin
+  Future handleTwitterAuth() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+    } else {
+      await sp.signInWithTwitter().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
+        } else {
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            } else {
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
+  }
+
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 1000)).then((value) {
       nextScreenReplace(context, const HomeScreen());
