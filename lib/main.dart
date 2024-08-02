@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:login_app/provider/internet_provider.dart';
 import 'package:login_app/provider/sign_in_provider.dart';
 import 'package:login_app/screens/gradient_screen.dart';
 import 'package:login_app/screens/splash_screen.dart';
@@ -57,7 +58,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => SignInProvider()),
+        ChangeNotifierProvider(create: (_) => InternetProvider()),
+        ChangeNotifierProvider(create: (_) => SignInProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -16,11 +16,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   // handle after signin
-  handleAfterSignIn() {
-    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
-      nextScreenReplace(context, const HomeScreen());
-    });
-  }
+  // handleAfterSignIn() {
+  //   Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+  //     nextScreenReplace(context, const HomeScreen());
+  //   });
+  // }
 
   // Future<void> handleAfterSignIn() async {
   //   // Implement the actions to be taken after a successful sign-in
@@ -191,6 +191,13 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       });
     }
+  }
+
+  // handle after signin
+  handleAfterSignIn() {
+    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+      nextScreenReplace(context, const HomeScreen());
+    });
   }
 
   Widget _buildSocialMediaButton(String assetName,
