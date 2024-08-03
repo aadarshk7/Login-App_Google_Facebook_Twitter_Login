@@ -1,19 +1,15 @@
 import 'dart:convert';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_login/twitter_login.dart';
 
 class SignInProvider extends ChangeNotifier {
-  // final GoogleSignIn _googleSignIn = GoogleSignIn();
-  // instance of firebaseauth, facebook and google
-
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FacebookAuth facebookAuth = FacebookAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -24,28 +20,35 @@ class SignInProvider extends ChangeNotifier {
       redirectURI: "socialauth://");
 
   bool _isSignedIn = false;
+
   bool get isSignedIn => _isSignedIn;
 
-  //hasError, errorCode, provider,uid, email, name, imageUrl
   bool _hasError = false;
+
   bool get hasError => _hasError;
 
   String? _errorCode;
+
   String? get errorCode => _errorCode;
 
   String? _provider;
+
   String? get provider => _provider;
 
   String? _uid;
+
   String? get uid => _uid;
 
   String? _name;
+
   String? get name => _name;
 
   String? _email;
+
   String? get email => _email;
 
   String? _imageUrl;
+
   String? get imageUrl => _imageUrl;
 
   SignInProvider() {
@@ -65,34 +68,11 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> _signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-  //     if (googleUser == null) {
-  //       // User canceled the sign-in
-  //       return;
-  //     }
-  //
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser.authentication;
-  //     final credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-  //
-  //     await FirebaseAuth.instance.signInWithCredential(credential);
-  //   } catch (e) {
-  //     print('Google Sign-In Error: $e');
-  //   }
-  // }
-
-  // sign in with google
   Future signInWithGoogle() async {
     final GoogleSignInAccount? googleSignInAccount =
         await googleSignIn.signIn();
 
     if (googleSignInAccount != null) {
-      // executing our authentication
       try {
         final GoogleSignInAuthentication googleSignInAuthentication =
             await googleSignInAccount.authentication;
@@ -101,11 +81,9 @@ class SignInProvider extends ChangeNotifier {
           idToken: googleSignInAuthentication.idToken,
         );
 
-        // signing to firebase user instance
         final User userDetails =
             (await firebaseAuth.signInWithCredential(credential)).user!;
 
-        // now save all values
         _name = userDetails.displayName;
         _email = userDetails.email;
         _imageUrl = userDetails.photoURL;
@@ -138,7 +116,6 @@ class SignInProvider extends ChangeNotifier {
     }
   }
 
-  // sign in with twitter
   Future signInWithTwitter() async {
     final authResult = await twitterLogin.loginV2();
     if (authResult.status == TwitterLoginStatus.loggedIn) {
@@ -149,7 +126,6 @@ class SignInProvider extends ChangeNotifier {
         await firebaseAuth.signInWithCredential(credential);
 
         final userDetails = authResult.user;
-        // save all the data
         _name = userDetails!.name;
         _email = firebaseAuth.currentUser!.email;
         _imageUrl = userDetails.thumbnailImage;
@@ -183,55 +159,51 @@ class SignInProvider extends ChangeNotifier {
     }
   }
 
-  // sign in with facebook
-  // Future signInWithFacebook() async {
-  //   final LoginResult result = await facebookAuth.login();
-  //   // getting the profile
-  //   final graphResponse = await http.get(Uri.parse(
-  //       'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=${result.accessToken!.token}'));
-  //
-  //   final profile = jsonDecode(graphResponse.body);
-  //
-  //   if (result.status == LoginStatus.success) {
-  //     try {
-  //       final OAuthCredential credential =
-  //           FacebookAuthProvider.credential(result.accessToken!.token);
-  //       await firebaseAuth.signInWithCredential(credential);
-  //       // saving the values
-  //       _name = profile['name'];
-  //       _email = profile['email'];
-  //       _imageUrl = profile['picture']['data']['url'];
-  //       _uid = profile['id'];
-  //       _hasError = false;
-  //       _provider = "FACEBOOK";
-  //       notifyListeners();
-  //     } on FirebaseAuthException catch (e) {
-  //       switch (e.code) {
-  //         case "account-exists-with-different-credential":
-  //           _errorCode =
-  //               "You already have an account with us. Use correct provider";
-  //           _hasError = true;
-  //           notifyListeners();
-  //           break;
-  //
-  //         case "null":
-  //           _errorCode = "Some unexpected error while trying to sign in";
-  //           _hasError = true;
-  //           notifyListeners();
-  //           break;
-  //         default:
-  //           _errorCode = e.toString();
-  //           _hasError = true;
-  //           notifyListeners();
-  //       }
-  //     }
-  //   } else {
-  //     _hasError = true;
-  //     notifyListeners();
-  //   }
-  // }
+// sign in with facebook
+  Future signInWithFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    final graphResponse = await http.get(Uri.parse(
+        'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email,picture.width(200)&access_token=${result.accessToken!.tokenString}'));
+    final profile = jsonDecode(graphResponse.body);
+    if (result.status == LoginStatus.success) {
+      try {
+        final AuthCredential credential =
+            FacebookAuthProvider.credential(result.accessToken!.tokenString);
+        final User userDetails =
+            (await firebaseAuth.signInWithCredential(credential)).user!;
+        _name = profile['name'];
+        _email = userDetails.email;
+        _imageUrl = profile['picture']['data']['url'];
+        _provider = "FACEBOOK";
+        _uid = userDetails.uid;
+        _hasError = false;
+        notifyListeners();
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "account-exists-with-different-credential":
+            _errorCode =
+                "You already have an account with us. Use correct provider";
+            _hasError = true;
+            notifyListeners();
+            break;
 
-  // ENTRY FOR CLOUDFIRESTORE
+          case "null":
+            _errorCode = "Some unexpected error while trying to sign in";
+            _hasError = true;
+            notifyListeners();
+            break;
+          default:
+            _errorCode = e.toString();
+            _hasError = true;
+            notifyListeners();
+        }
+      }
+    } else {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
+
   Future getUserDataFromFirestore(uid) async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -279,7 +251,6 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // checkUser exists or not in cloudfirestore
   Future<bool> checkUserExists() async {
     DocumentSnapshot snap =
         await FirebaseFirestore.instance.collection('users').doc(_uid).get();
@@ -292,15 +263,13 @@ class SignInProvider extends ChangeNotifier {
     }
   }
 
-  // signout
   Future userSignOut() async {
-    await firebaseAuth.signOut;
+    await firebaseAuth.signOut();
     await googleSignIn.signOut();
     await facebookAuth.logOut();
 
     _isSignedIn = false;
     notifyListeners();
-    // clear all storage information
     clearStoredData();
   }
 

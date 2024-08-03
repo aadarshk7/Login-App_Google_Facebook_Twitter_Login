@@ -5,11 +5,11 @@ import 'package:login_app/screens/home_screen.dart';
 import 'package:login_app/utils/next_screen.dart';
 import 'package:login_app/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '../provider/internet_provider.dart';
 import '../provider/sign_in_provider.dart';
 import '../utils/config.dart';
@@ -17,6 +17,8 @@ import '../utils/next_screen.dart';
 import '../utils/snack_bar.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -24,7 +26,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 //  final String userName;
   final TextEditingController emailController = TextEditingController();
-
+  final RoundedLoadingButtonController facebookController =
+      RoundedLoadingButtonController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
@@ -128,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                           'assets/images/xlogo.png', handleGoogleSignIn),
                       _buildSocialMediaButton(
                           'assets/images/facebooklogopng.png',
-                          handleGoogleSignIn),
+                          handleFacebookAuth),
                       _buildSocialMediaButton(
                           'assets/images/googlelogo.png', handleGoogleSignIn),
                       _buildSocialMediaButton(
@@ -186,6 +189,44 @@ class _LoginPageState extends State<LoginPage> {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
+        } else {
+          // checking whether user exists or not
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              // user exists
+              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            } else {
+              // user does not exist
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
+  }
+
+  // handling facebookauth
+  Future handleFacebookAuth() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+      facebookController.reset();
+    } else {
+      await sp.signInWithFacebook().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
+          facebookController.reset();
         } else {
           // checking whether user exists or not
           sp.checkUserExists().then((value) async {
