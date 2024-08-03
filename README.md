@@ -1,20 +1,13 @@
-<<<<<<< HEAD
-# login_app
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Login-App
->>>>>>> 86b9f11692654754db4f2ba1baf8eef78875922a
+# LoginApp Application
+Four Features in one App
+<h2> Splash Screen Using LineGradient</h2>
+<p> <img src="https://github.com/aadarshk7/Login-App/blob/master/assets/screenshots/splashscreen.jpg" height = 555 width=333/> </p>
+<h2>Login Screen which contains social media logins</h2>
+Facebook, Google, X, Github
+<p> <img src="https://github.com/aadarshk7/Login-App/blob/master/assets/screenshots/loginscreen.jpg" height = 555 width=333/> </p> 
+<h2> After signin with valid gmail account user's is welcome to the homescreen and the data is stored in firebase database</h2>
+<p> <img src="https://github.com/aadarshk7/Login-App/blob/master/assets/screenshots/homescreen.jpg" height = 555 width=333/> </p>
+<h2> User can logout and the data of user will be saved using shared_preferences flutter package</h2>
+<p> <img src="https://github.com/aadarshk7/Login-App/blob/master/assets/screenshots/navscreen.jpg" height = 555 width=333/> </p>
+<!-- <h2> Nodepad </h2>
+<p> <img src="" height = 777 width=444/> </p> -->
