@@ -12,9 +12,14 @@ class GradientScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xffFFC3A0),
-              Color(0xffFFAFBD),
+              // Color(0xffFFC3A0),
+              // Color(0xffFFAFBD),
+              // Color(0xffFF9CE2),
+              Colors.green,
+              Colors.blue,
               Color(0xffFF9CE2),
+              Color(0xffFFAFBD),
+              Color(0xffFFC3A0),
             ],
           ),
         ),
@@ -29,12 +34,20 @@ class GradientScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Center(
-                child: Text(
-                  'Gradient Screen',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                child: ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Colors.blue, Colors.green],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds),
+                  child: const Text(
+                    'Login Screen',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors
+                          .white, // This color will be overridden by the ShaderMask
+                    ),
                   ),
                 ),
               ),

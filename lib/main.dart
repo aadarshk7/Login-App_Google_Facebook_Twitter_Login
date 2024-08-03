@@ -62,43 +62,45 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return MultiProvider(
-    //     providers: [
-    //     ChangeNotifierProvider(
-    //     create: ((context)
-    // =>
-    //     SignInProvider()
-    // ),
-    // ),
-    // ChangeNotifierProvider(
-    // create: ((context) => InternetProvider()),
-    // ),
-    // ],
-    // ),
-    // Update the parameter name in the MaterialApp widget
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-          if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
-          }
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.data == null) {
-              return Googlescreen();
-            } else {
-              return LoginPage(
-                  userName: FirebaseAuth.instance.currentUser!
-                      .displayName!); // Corrected parameter name
-            }
-          }
-          return Center(child: CircularProgressIndicator());
-        },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: ((context) => SignInProvider()),
+        ),
+        ChangeNotifierProvider(
+          create: ((context) => InternetProvider()),
+        ),
+      ],
+      child: const MaterialApp(
+        home: SplashScreen(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
 }
+
+// // Update the parameter name in the MaterialApp widget
+// return MaterialApp(
+//   debugShowCheckedModeBanner: false,
+//   home: StreamBuilder<User?>(
+//     stream: FirebaseAuth.instance.authStateChanges(),
+//     builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+//       if (snapshot.hasError) {
+//         return Text(snapshot.error.toString());
+//       }
+//       if (snapshot.connectionState == ConnectionState.active) {
+//         if (snapshot.data == null) {
+//           return Googlescreen();
+//         } else {
+//           return LoginPage(
+//               userName: FirebaseAuth.instance.currentUser!
+//                   .displayName!); // Corrected parameter name
+//         }
+//       }
+//       return Center(child: CircularProgressIndicator());
+//     },
+//   ),
+// );
 
 // class AuthWrapper extends StatelessWidget {
 //   @override
