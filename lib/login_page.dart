@@ -1,12 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:login_app/screens/home_screen.dart';
+import 'package:login_app/utils/next_screen.dart';
+import 'package:login_app/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
-  final String userName;
-  LoginPage({Key? key, required this.userName}) : super(key: key);
+import '../provider/internet_provider.dart';
+import '../provider/sign_in_provider.dart';
+import '../utils/config.dart';
+import '../utils/next_screen.dart';
+import '../utils/snack_bar.dart';
+
+class LoginPage extends StatefulWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+//  final String userName;
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
@@ -14,19 +30,20 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(userName),
-        actions: [
-          IconButton(
-            // icon: const Icon(Icons.logout),
-            onPressed: () async {
-              GoogleSignIn().signOut();
-              FirebaseAuth.instance.signOut();
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
-      ),
+      //appBar: AppBar(,
+      // title: Text(userName),
+      // actions: [
+      //   IconButton(
+      //     // icon: const Icon(Icons.logout),
+      //     onPressed: () async {
+      //       GoogleSignIn().signOut();
+      //       FirebaseAuth.instance.signOut();
+      //     },
+      //     icon: Icon(Icons.logout),
+      //   ),
+      // ],
+      //),
+
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -53,9 +70,9 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Center(
-                  child: Text('Welcome, $userName!!'),
-                ),
+                // Center(
+                //   child: Text('Welcome, $userName!!'),
+                // ),
               ],
             ),
             Padding(
@@ -107,11 +124,15 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _buildSocialMediaButton('assets/images/xlogo.png'),
                       _buildSocialMediaButton(
-                          'assets/images/facebooklogopng.png'),
-                      _buildSocialMediaButton('assets/images/googlelogo.png'),
-                      _buildSocialMediaButton('assets/images/github.png'),
+                          'assets/images/xlogo.png', handleGoogleSignIn),
+                      _buildSocialMediaButton(
+                          'assets/images/facebooklogopng.png',
+                          handleGoogleSignIn),
+                      _buildSocialMediaButton(
+                          'assets/images/googlelogo.png', handleGoogleSignIn),
+                      _buildSocialMediaButton(
+                          'assets/images/github.png', handleGoogleSignIn),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -139,7 +160,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialMediaButton(String assetName) {
+  Widget _buildSocialMediaButton(String assetName, VoidCallback onPressed) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
@@ -147,9 +168,51 @@ class LoginPage extends StatelessWidget {
         height: 50,
         child: IconButton(
           icon: Image.asset(assetName),
-          onPressed: () {},
+          onPressed: onPressed,
         ),
       ),
     );
+  }
+
+  // handling google sigin in
+  Future handleGoogleSignIn() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+    } else {
+      await sp.signInWithGoogle().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
+        } else {
+          // checking whether user exists or not
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              // user exists
+              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            } else {
+              // user does not exist
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
+  }
+
+  handleAfterSignIn() {
+    Future.delayed(const Duration(milliseconds: 1000)).then((value) {
+      nextScreenReplace(context, const HomeScreen());
+    });
   }
 }

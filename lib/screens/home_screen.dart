@@ -1,3 +1,4 @@
+import '../login_page.dart';
 import '../screens/login_screen.dart';
 import '../utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -28,9 +29,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // change read to watch!!!!
     final sp = context.watch<SignInProvider>();
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Home'),
+        backgroundColor: Colors.blueAccent,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text(sp.name ?? "User Name"),
+              accountEmail: Text(sp.email ?? "user@example.com"),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: NetworkImage(sp.imageUrl ?? ""),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('View Profile'),
+              onTap: () {
+                // Navigate to profile screen
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                // Navigate to settings screen
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {
+                sp.userSignOut();
+                nextScreenReplace(context, LoginPage());
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: NetworkImage("${sp.imageUrl}"),
+              backgroundImage: NetworkImage(sp.imageUrl ?? ""),
               radius: 50,
             ),
             const SizedBox(
@@ -46,21 +90,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Text(
               "Welcome ${sp.name}",
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              "${sp.email}",
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              sp.email ?? "",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              "${sp.uid}",
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              sp.uid ?? "",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
             ),
             const SizedBox(
               height: 10,
@@ -73,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   width: 5,
                 ),
-                Text("${sp.provider}".toUpperCase(),
+                Text(sp.provider?.toUpperCase() ?? "",
                     style: const TextStyle(color: Colors.red)),
               ],
             ),
@@ -93,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 onPressed: () {
                   sp.userSignOut();
-                  nextScreenReplace(context, LoginScreen());
+                  nextScreenReplace(context, LoginPage());
                 },
                 child: const Text(
                   "SIGNOUT",

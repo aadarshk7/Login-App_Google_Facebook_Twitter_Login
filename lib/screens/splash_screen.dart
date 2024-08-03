@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:login_app/login_page.dart';
+
 import '../provider/sign_in_provider.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
@@ -24,8 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
     // create a timer of 2 seconds
     Timer(const Duration(seconds: 2), () {
       sp.isSignedIn == false
-          ? nextScreen(context, LoginScreen())
-          : nextScreen(context, const HomeScreen());
+          ? nextScreen(context, LoginPage())
+          : nextScreen(context, HomeScreen());
     });
   }
 
