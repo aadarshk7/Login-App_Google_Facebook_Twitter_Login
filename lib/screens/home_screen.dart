@@ -81,14 +81,27 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 20,
             ),
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  minimumSize:
+                      Size(MediaQuery.of(context).size.width * 0.80, 50),
+                  elevation: 0,
+                ),
                 onPressed: () {
                   sp.userSignOut();
                   nextScreenReplace(context, LoginScreen());
                 },
-                child: const Text("SIGNOUT",
-                    style: TextStyle(
-                      color: Colors.white,
-                    )))
+                child: const Text(
+                  "SIGNOUT",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ))
           ],
         ),
       ),

@@ -1,20 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:login_app/provider/internet_provider.dart';
 import 'package:login_app/provider/sign_in_provider.dart';
-import 'package:login_app/screens/google_screen.dart';
-import 'package:login_app/screens/gradient_screen.dart';
-import 'package:login_app/screens/google_screen.dart';
 import 'package:login_app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'auth_service.dart';
-import 'home_page.dart';
-import 'login_page.dart';
 import "package:flutter/src/painting/text_style.dart" as ts;
-// import 'firebase_options.dart';flutter
 
 // Code to connect with firebase databases
 Future main() async {
