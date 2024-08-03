@@ -20,8 +20,7 @@ Future main() async {
             messagingSenderId: "939288879280",
             appId: "1:939288879280:web:55e90537025b14526bdb75",
             measurementId: "G-FREWCBF7Y1"));
-  }
-  ;
+  };
 
 // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 //   const firebaseConfig = {
