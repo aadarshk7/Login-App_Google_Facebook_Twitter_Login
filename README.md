@@ -1,5 +1,6 @@
 # LoginApp Application
-Four Features in one App
+<h4>Flutter project, Login_App! 
+  Featuring Animations, State management(provider), Firebase Authentication, Shared Preferences, Social Media and database integration.</h4>
 <h2> Splash Screen Using LineGradient</h2>
 <p> <img src="https://github.com/aadarshk7/Login-App/blob/master/assets/screenshots/splashscreen.jpg" height = 555 width=333/> </p>
 <h2>Login Screen which contains social media logins</h2>
