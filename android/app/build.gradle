@@ -44,7 +44,14 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
-
+    signingConfigs {
+        release {
+            keyAlias 'my-release-key-alias' // Replace with your alias
+            keyPassword 'android' // Replace with your key password
+            storeFile file('C:/Users/aadar/my-release-key.keystore') // Path to your keystore
+            storePassword 'android' // Replace with your keystore password
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

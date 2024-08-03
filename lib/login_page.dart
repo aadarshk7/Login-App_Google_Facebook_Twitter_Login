@@ -5,7 +5,6 @@ import 'package:login_app/screens/home_screen.dart';
 import 'package:login_app/utils/next_screen.dart';
 import 'package:login_app/utils/snack_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,8 +25,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 //  final String userName;
   final TextEditingController emailController = TextEditingController();
-  final RoundedLoadingButtonController facebookController =
-      RoundedLoadingButtonController();
+  final TextEditingController facebookController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
@@ -221,12 +219,12 @@ class _LoginPageState extends State<LoginPage> {
 
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
-      facebookController.reset();
+      //facebookController.clear();
     } else {
       await sp.signInWithFacebook().then((value) {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
-          facebookController.reset();
+          //facebookController.reset();
         } else {
           // checking whether user exists or not
           sp.checkUserExists().then((value) async {
