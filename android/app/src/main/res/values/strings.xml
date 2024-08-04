@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">LoginApp</string>
     <string name="facebook_app_id">1128461258222572</string>
-    <string name="facebook_login_protocol_scheme">fb7cd5676489f3eed57211a754110c4f7e</string>
+    <string name="fb_login_protocol_scheme">fb7cd5676489f3eed57211a754110c4f7e</string>
     <string name="facebook_client_token">b5185952d2ab897acec4c4e03f4b1b5d</string>
 </resources>
