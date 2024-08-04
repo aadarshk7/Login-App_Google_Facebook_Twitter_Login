@@ -30,17 +30,9 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_1_8
-//        targetCompatibility = JavaVersion.VERSION_1_8
-//    }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -48,19 +40,11 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 23  // Updated minSdkVersion to 23
-        targetSdkVersion 33  // Updated targetSdkVersion to 34
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
-    signingConfigs {
-        release {
-            keyAlias 'my-release-key-alias' // Replace with your alias
-            keyPassword 'android' // Replace with your key password
-            storeFile file('C:/Users/aadar/my-release-key.keystore') // Path to your keystore
-            storePassword 'android' // Replace with your keystore password
-        }
-    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -75,7 +59,6 @@ flutter {
 }
 
 dependencies {
-    // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:33.1.2')
 
     // TODO: Add the dependencies for Firebase products you want to use
@@ -83,7 +66,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
-    implementation 'org.codehaus.groovy:groovy-all:3.0.9' // Or the latest stable version
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries

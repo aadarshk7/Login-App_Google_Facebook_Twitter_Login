@@ -20,7 +20,8 @@ Future main() async {
             messagingSenderId: "939288879280",
             appId: "1:939288879280:web:55e90537025b14526bdb75",
             measurementId: "G-FREWCBF7Y1"));
-  };
+  }
+  ;
 
 // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 //   const firebaseConfig = {
@@ -94,7 +95,7 @@ class MyApp extends StatelessWidget {
 
 // class AuthWrapper extends StatelessWidget {
 //   @override
-//   Widget build(BuildContext context) {
+//   Widget build(BuildContext context){
 //     final authService = Provider.of<AuthService>(context);
 //     return StreamBuilder<User?>(
 //       stream: authService.user,

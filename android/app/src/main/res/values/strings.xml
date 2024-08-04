@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LoginAppDemo</string>
-    <string name="facebook_app_id">904171008209686</string>
-    <string name="fb_login_protocol_scheme">fb904171008209686</string>
-    <string name="facebook_client_token">8387c20aa19d88599e04c7f2f69a5a5c</string>
+    <string name="app_name">LoginApp</string>
+    <string name="facebook_app_id">1128461258222572</string>
     <string name="facebook_login_protocol_scheme">fb7cd5676489f3eed57211a754110c4f7e</string>
+    <string name="facebook_client_token">b5185952d2ab897acec4c4e03f4b1b5d</string>
 </resources>
