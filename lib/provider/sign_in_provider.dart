@@ -14,10 +14,10 @@ class SignInProvider extends ChangeNotifier {
   final FacebookAuth facebookAuth = FacebookAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
-  // final twitterLogin = TwitterLogin(
-  //     apiKey: Config.apikey_twitter,
-  //     apiSecretKey: Config.secretkey_twitter,
-  //     redirectURI: "socialauth://");
+  final twitterLogin = TwitterLogin(
+      apiKey: Config.apikey_twitter,
+      apiSecretKey: Config.secretkey_twitter,
+      redirectURI: "socialauth://");
 
   bool _isSignedIn = false;
 
@@ -116,48 +116,48 @@ class SignInProvider extends ChangeNotifier {
     }
   }
 
-  // Future signInWithTwitter() async {
-  //   final authResult = await twitterLogin.loginV2();
-  //   if (authResult.status == TwitterLoginStatus.loggedIn) {
-  //     try {
-  //       final credential = TwitterAuthProvider.credential(
-  //           accessToken: authResult.authToken!,
-  //           secret: authResult.authTokenSecret!);
-  //       await firebaseAuth.signInWithCredential(credential);
-  //
-  //       final userDetails = authResult.user;
-  //       _name = userDetails!.name;
-  //       _email = firebaseAuth.currentUser!.email;
-  //       _imageUrl = userDetails.thumbnailImage;
-  //       _uid = userDetails.id.toString();
-  //       _provider = "TWITTER";
-  //       _hasError = false;
-  //       notifyListeners();
-  //     } on FirebaseAuthException catch (e) {
-  //       switch (e.code) {
-  //         case "account-exists-with-different-credential":
-  //           _errorCode =
-  //               "You already have an account with us. Use correct provider";
-  //           _hasError = true;
-  //           notifyListeners();
-  //           break;
-  //
-  //         case "null":
-  //           _errorCode = "Some unexpected error while trying to sign in";
-  //           _hasError = true;
-  //           notifyListeners();
-  //           break;
-  //         default:
-  //           _errorCode = e.toString();
-  //           _hasError = true;
-  //           notifyListeners();
-  //       }
-  //     }
-  //   } else {
-  //     _hasError = true;
-  //     notifyListeners();
-  //   }
-  // }
+  Future signInWithTwitter() async {
+    final authResult = await twitterLogin.loginV2();
+    if (authResult.status == TwitterLoginStatus.loggedIn) {
+      try {
+        final credential = TwitterAuthProvider.credential(
+            accessToken: authResult.authToken!,
+            secret: authResult.authTokenSecret!);
+        await firebaseAuth.signInWithCredential(credential);
+
+        final userDetails = authResult.user;
+        _name = userDetails!.name;
+        _email = firebaseAuth.currentUser!.email;
+        _imageUrl = userDetails.thumbnailImage;
+        _uid = userDetails.id.toString();
+        _provider = "TWITTER";
+        _hasError = false;
+        notifyListeners();
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "account-exists-with-different-credential":
+            _errorCode =
+                "You already have an account with us. Use correct provider";
+            _hasError = true;
+            notifyListeners();
+            break;
+
+          case "null":
+            _errorCode = "Some unexpected error while trying to sign in";
+            _hasError = true;
+            notifyListeners();
+            break;
+          default:
+            _errorCode = e.toString();
+            _hasError = true;
+            notifyListeners();
+        }
+      }
+    } else {
+      _hasError = true;
+      notifyListeners();
+    }
+  }
 
 // sign in with facebook
   Future signInWithFacebook() async {
