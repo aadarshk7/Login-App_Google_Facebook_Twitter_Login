@@ -218,7 +218,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (ip.hasInternet == false) {
       openSnackbar(context, "Check your Internet connection", Colors.red);
-      //facebookController.clear();
+      facebookController.clear();
     } else {
       await sp.signInWithFacebook().then((value) {
         if (sp.hasError == true) {

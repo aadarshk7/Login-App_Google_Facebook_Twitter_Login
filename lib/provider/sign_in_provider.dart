@@ -167,7 +167,7 @@ class SignInProvider extends ChangeNotifier {
     final profile = jsonDecode(graphResponse.body);
     if (result.status == LoginStatus.success) {
       try {
-        final AuthCredential credential =
+        final OAuthCredential credential =
             FacebookAuthProvider.credential(result.accessToken!.tokenString);
         final User userDetails =
             (await firebaseAuth.signInWithCredential(credential)).user!;
@@ -263,6 +263,7 @@ class SignInProvider extends ChangeNotifier {
     }
   }
 
+//for signout
   Future userSignOut() async {
     await firebaseAuth.signOut();
     await googleSignIn.signOut();
@@ -270,6 +271,7 @@ class SignInProvider extends ChangeNotifier {
 
     _isSignedIn = false;
     notifyListeners();
+    //clear all storage information
     clearStoredData();
   }
 
