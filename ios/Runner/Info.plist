@@ -9,6 +9,7 @@
   <key>CFBundleURLSchemes</key>
   <array>
     <string>3863961873924888</string>
+    <string>loginapp</string>
   </array>
   </dict>
 </array>

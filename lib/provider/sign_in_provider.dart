@@ -17,7 +17,7 @@ class SignInProvider extends ChangeNotifier {
   final twitterLogin = TwitterLogin(
       apiKey: Config.apikey_twitter,
       apiSecretKey: Config.secretkey_twitter,
-      redirectURI: "socialauth://");
+      redirectURI: "loginapp://");
 
   bool _isSignedIn = false;
 
