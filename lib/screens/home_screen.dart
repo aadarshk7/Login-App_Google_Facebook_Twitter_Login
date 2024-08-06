@@ -111,10 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               // const SizedBox(height: 10),
-              // Text(
-              //   sp.uid ?? "",
-              //   style: Theme.of(context).textTheme.bodySmall,
-              // ),
+              Text(
+                "UID: ${sp.uid}",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               const SizedBox(height: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.redAccent,
+                  backgroundColor: Colors.lightBlueAccent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
                   ),
