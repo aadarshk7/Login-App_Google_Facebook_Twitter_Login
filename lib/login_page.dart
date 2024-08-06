@@ -25,6 +25,8 @@ class _LoginPageState extends State<LoginPage> {
 //  final String userName;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController facebookController = TextEditingController();
+  final TextEditingController twitterController = TextEditingController();
+  final TextEditingController googleController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
