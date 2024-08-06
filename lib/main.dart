@@ -76,7 +76,8 @@ class MyApp extends StatelessWidget {
 //   home: StreamBuilder<User?>(
 //     stream: FirebaseAuth.instance.authStateChanges(),
 //     builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-//       if (snapshot.hasError) {
+//       if (snapshot.hasError)
+//       {
 //         return Text(snapshot.error.toString());
 //       }
 //       if (snapshot.connectionState == ConnectionState.active) {
