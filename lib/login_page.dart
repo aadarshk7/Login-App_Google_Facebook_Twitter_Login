@@ -178,6 +178,41 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future handleTwitterAuth() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+    } else {
+      await sp.signInWithTwitter().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
+        } else {
+          // checking whether user exists or not
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              // user exists
+              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            } else {
+              // user does not exist
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
+  }
+
   // handling twitter auth
   // Future handleTwitterAuth() async {
   //   final sp = context.read<SignInProvider>();
@@ -220,52 +255,124 @@ class _LoginPageState extends State<LoginPage> {
 
   // handling google sigin in
 
+  // Future handleTwitterAuth() async {
+  //   final sp = context.read<SignInProvider>();
+  //   final ip = context.read<InternetProvider>();
+  //   await ip.checkInternetConnection();
+  //
+  //   if (ip.hasInternet == false) {
+  //     openSnackbar(context, "Check your Internet connection", Colors.red);
+  //   } else {
+  //     await sp.signInWithTwitter().then((value) {
+  //       if (sp.hasError == true) {
+  //         openSnackbar(context, sp.errorCode.toString(), Colors.red);
+  //       } else {
+  //         // checking whether user exists or not
+  //         sp.checkUserExists().then((value) async {
+  //           if (value == true) {
+  //             // user exists
+  //             await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+  //                 .saveDataToSharedPreferences()
+  //                 .then((value) => sp.setSignIn().then((value) {
+  //                       handleAfterSignIn();
+  //                     })));
+  //           } else {
+  //             // user does not exist
+  //             sp.saveDataToFirestore().then((value) => sp
+  //                 .saveDataToSharedPreferences()
+  //                 .then((value) => sp.setSignIn().then((value) {
+  //                       handleAfterSignIn();
+  //                     })));
+  //           }
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
+
   // Handling Twitter authentication
-  Future handleTwitterAuth() async {
-    final sp = context.read<SignInProvider>();
-    final ip = context.read<InternetProvider>();
-    await ip.checkInternetConnection();
+  // Future handleTwitterAuth() async {
+  //   final sp = context.read<SignInProvider>();
+  //   final ip = context.read<InternetProvider>();
+  //   await ip.checkInternetConnection();
+  //
+  //   if (ip.hasInternet == false) {
+  //     openSnackbar(context, "Check your Internet connection", Colors.red);
+  //   } else {
+  //     await sp.signInWithTwitter().then((value) {
+  //       if (sp.hasError == true) {
+  //         openSnackbar(context, sp.errorCode.toString(), Colors.red);
+  //         //twitterController.reset();
+  //       } else {
+  //         // checking whether user exists or not
+  //         sp.checkUserExists().then((value) async {
+  //           if (value == true) {
+  //             // user exists
+  //             await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+  //                 .saveDataToSharedPreferences()
+  //                 .then((value) => sp.setSignIn().then((value) {
+  //                       // twitterController.success();
+  //                       handleAfterSignIn();
+  //                     })));
+  //           } else {
+  //             // user does not exist
+  //             sp.saveDataToFirestore().then((value) => sp
+  //                 .saveDataToSharedPreferences()
+  //                 .then((value) => sp.setSignIn().then((value) {
+  //                       // twitterController.success();
+  //                       handleAfterSignIn();
+  //                     })));
+  //           }
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
-    if (ip.hasInternet == false) {
-      openSnackbar(context, "Check your Internet connection", Colors.red);
-    } else {
-      final twitterLogin = TwitterLogin(
-        consumerKey: Config.apikey_twitter,
-        consumerSecret: Config.secretkey_twitter,
-        apiKey: 'gRU3proY3qP9l4ZGOig9Kq9oo',
-      );
-
-      final TwitterLoginResult result = await twitterLogin.authorize();
-
-      switch (result.status) {
-        case TwitterLoginStatus.loggedIn:
-          final session = result.session;
-          // Use the Twitter session to sign in with Firebase
-          final twitterAuthCredential = TwitterAuthProvider.credential(
-            accessToken: session.token,
-            secret: session.secret,
-          );
-
-          try {
-            await FirebaseAuth.instance
-                .signInWithCredential(twitterAuthCredential);
-            handleAfterSignIn();
-          } catch (e) {
-            openSnackbar(context, "Error: $e", Colors.red);
-          }
-          break;
-
-        case TwitterLoginStatus.cancelledByUser:
-          openSnackbar(context, "Twitter login cancelled", Colors.red);
-          break;
-
-        case TwitterLoginStatus.error:
-          openSnackbar(context, "Twitter login error: ${result.errorMessage}",
-              Colors.red);
-          break;
-      }
-    }
-  }
+  // Future handleTwitterAuth() async {
+  //     final twitterLogin = TwitterLogin(
+  //       // consumerKey: Config.apikey_twitter,
+  //       // consumerSecret: Config.secretkey_twitter,
+  //       apiKey: 'gRU3proY3qP9l4ZGOig9Kq9oo',
+  //       apiSecretKey: '6HOZ1cUjrF37uHSDsuPW5Dh9LsMhlFFvbtYDHiKXQ2d1vnO6BU',
+  //       redirectURI: 'loginapp://',
+  //     );
+  //
+  //     final authResult = await twitterLogin.login();
+  //
+  //     switch (authResult.status) {
+  //       case TwitterLoginStatus.loggedIn:
+  //         final authToken = authResult.authToken!;
+  //         final authTokenSecret = authResult.authTokenSecret!;
+  //
+  //         // Use the Twitter session to sign in with Firebase
+  //         final twitterAuthCredential = TwitterAuthProvider.credential(
+  //           accessToken: authToken,
+  //           secret: authTokenSecret,
+  //         );
+  //
+  //         try {
+  //           await FirebaseAuth.instance
+  //               .signInWithCredential(twitterAuthCredential);
+  //           handleAfterSignIn();
+  //         } catch (e) {
+  //           openSnackbar(context, "Error: $e", Colors.red);
+  //         }
+  //         break;
+  //
+  //       case TwitterLoginStatus.cancelledByUser:
+  //         openSnackbar(context, "Twitter login cancelled", Colors.red);
+  //         break;
+  //
+  //       case TwitterLoginStatus.error:
+  //         openSnackbar(context,
+  //             "Twitter login error: ${authResult.errorMessage}", Colors.red);
+  //         break;
+  //       case null:
+  //       // TODO: Handle this case.
+  //     }
+  //   }
+  // }
 
   Future handleGoogleSignIn() async {
     final sp = context.read<SignInProvider>();

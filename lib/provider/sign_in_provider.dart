@@ -117,47 +117,104 @@ class SignInProvider extends ChangeNotifier {
   }
 
   Future signInWithTwitter() async {
-    final authResult = await twitterLogin.loginV2();
+    final twitterLogin = TwitterLogin(
+      apiKey: 'gRU3proY3qP9l4ZGOig9Kq9oo',
+      apiSecretKey: '6HOZ1cUjrF37uHSDsuPW5Dh9LsMhlFFvbtYDHiKXQ2d1vnO6BU',
+      redirectURI: 'loginapp://',
+    );
+
+    final authResult = await twitterLogin.login();
+
     if (authResult.status == TwitterLoginStatus.loggedIn) {
-      try {
-        final credential = TwitterAuthProvider.credential(
-            accessToken: authResult.authToken!,
-            secret: authResult.authTokenSecret!);
-        await firebaseAuth.signInWithCredential(credential);
+      final authToken = authResult.authToken;
+      final authTokenSecret = authResult.authTokenSecret;
 
-        final userDetails = authResult.user;
-        _name = userDetails!.name;
-        _email = firebaseAuth.currentUser!.email;
-        _imageUrl = userDetails.thumbnailImage;
-        _uid = userDetails.id.toString();
-        _provider = "TWITTER";
-        _hasError = false;
-        notifyListeners();
-      } on FirebaseAuthException catch (e) {
-        switch (e.code) {
-          case "account-exists-with-different-credential":
-            _errorCode =
-                "You already have an account with us. Use correct provider";
-            _hasError = true;
-            notifyListeners();
-            break;
+      if (authToken != null && authTokenSecret != null) {
+        final twitterAuthCredential = TwitterAuthProvider.credential(
+          accessToken: authToken,
+          secret: authTokenSecret,
+        );
 
-          case "null":
-            _errorCode = "Some unexpected error while trying to sign in";
-            _hasError = true;
+        try {
+          final UserCredential userCredential =
+              await firebaseAuth.signInWithCredential(twitterAuthCredential);
+          final User? user = userCredential.user;
+
+          if (user != null) {
+            _uid = user.uid;
+            _name = user.displayName;
+            _email = user.email;
+            _imageUrl = user.photoURL;
+            _provider = "TWITTER";
+            _hasError = false;
             notifyListeners();
-            break;
-          default:
-            _errorCode = e.toString();
+          } else {
             _hasError = true;
+            _errorCode = "User is null";
             notifyListeners();
+          }
+        } on FirebaseAuthException catch (e) {
+          _hasError = true;
+          _errorCode = e.message;
+          notifyListeners();
         }
+      } else {
+        _hasError = true;
+        _errorCode = "Auth token or secret is null";
+        notifyListeners();
       }
     } else {
       _hasError = true;
+      _errorCode = authResult.errorMessage;
       notifyListeners();
     }
   }
+
+//sign in with X
+  // sign in with twitter
+  // Future signInWithTwitter() async {
+  //   final authResult = await twitterLogin.loginV2();
+  //   if (authResult.status == TwitterLoginStatus.loggedIn) {
+  //     try {
+  //       final credential = TwitterAuthProvider.credential(
+  //           accessToken: authResult.authToken!,
+  //           secret: authResult.authTokenSecret!);
+  //       await firebaseAuth.signInWithCredential(credential);
+  //
+  //       final userDetails = authResult.user;
+  //       // save all the data
+  //       _name = userDetails!.name;
+  //       _email = firebaseAuth.currentUser!.email;
+  //       _imageUrl = userDetails.thumbnailImage;
+  //       _uid = userDetails.id.toString();
+  //       _provider = "TWITTER";
+  //       _hasError = false;
+  //       notifyListeners();
+  //     } on FirebaseAuthException catch (e) {
+  //       switch (e.code) {
+  //         case "account-exists-with-different-credential":
+  //           _errorCode =
+  //               "You already have an account with us. Use correct provider";
+  //           _hasError = true;
+  //           notifyListeners();
+  //           break;
+  //
+  //         case "null":
+  //           _errorCode = "Some unexpected error while trying to sign in";
+  //           _hasError = true;
+  //           notifyListeners();
+  //           break;
+  //         default:
+  //           _errorCode = e.toString();
+  //           _hasError = true;
+  //           notifyListeners();
+  //       }
+  //     }
+  //   } else {
+  //     _hasError = true;
+  //     notifyListeners();
+  //   }
+  // }
 
 // sign in with facebook
   Future signInWithFacebook() async {
@@ -233,11 +290,23 @@ class SignInProvider extends ChangeNotifier {
 
   Future saveDataToSharedPreferences() async {
     final SharedPreferences s = await SharedPreferences.getInstance();
-    await s.setString('name', _name!);
-    await s.setString('email', _email!);
-    await s.setString('uid', _uid!);
-    await s.setString('image_url', _imageUrl!);
-    await s.setString('provider', _provider!);
+
+    if (_name != null) {
+      await s.setString('name', _name!);
+    }
+    if (_email != null) {
+      await s.setString('email', _email!);
+    }
+    if (_uid != null) {
+      await s.setString('uid', _uid!);
+    }
+    if (_imageUrl != null) {
+      await s.setString('image_url', _imageUrl!);
+    }
+    if (_provider != null) {
+      await s.setString('provider', _provider!);
+    }
+
     notifyListeners();
   }
 
