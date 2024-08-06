@@ -193,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
           // checking whether user exists or not
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              // user exists
+              // user already exists
               await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
                   .saveDataToSharedPreferences()
                   .then((value) => sp.setSignIn().then((value) {
