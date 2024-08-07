@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import '../utils/config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -258,6 +259,52 @@ class SignInProvider extends ChangeNotifier {
     } else {
       _hasError = true;
       notifyListeners();
+    }
+  }
+
+  //github signin
+  Future signInWithGitHub() async {
+    // Generate the GitHub authentication URL
+    final String url =
+        'https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&scope=read:user%20user:email';
+
+    try {
+      // Start the authentication flow
+      final result = await FlutterWebAuth.authenticate(
+          url: url, callbackUrlScheme: "https");
+
+      // Extract the code from the callback URL
+      final code = Uri.parse(result).queryParameters['code'];
+
+      // Exchange the code for an access token
+      final response = await http.post(
+        Uri.parse('https://github.com/login/oauth/access_token'),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'client_id': clientId,
+          'client_secret': clientSecret,
+          'code': code,
+          'redirect_uri': redirectUri,
+        },
+      );
+
+      final accessToken = json.decode(response.body)['access_token'];
+
+      // Use the access token to sign in with Firebase
+      final githubAuthCredential = GithubAuthProvider.credential(accessToken);
+
+      await FirebaseAuth.instance.signInWithCredential(githubAuthCredential);
+
+      // Handle successful sign-in
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signed in with GitHub!')),
+      );
+      // Call handleAfterSignIn method
+    } catch (e) {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error signing in with GitHub: $e')),
+      );
     }
   }
 
