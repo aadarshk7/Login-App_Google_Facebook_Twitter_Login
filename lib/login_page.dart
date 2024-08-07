@@ -145,8 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                           handleFacebookAuth),
                       _buildSocialMediaButton(
                           'assets/images/googlelogo.png', handleGoogleSignIn),
-                      _buildSocialMediaButton('assets/images/github.png',
-                          signInWithGitHub as VoidCallback),
+                      _buildSocialMediaButton(
+                          'assets/images/github.png', handleGithubAuth),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -384,6 +384,7 @@ class _LoginPageState extends State<LoginPage> {
   //   }
   // }
 
+  //handeling googleauth
   Future handleGoogleSignIn() async {
     final sp = context.read<SignInProvider>();
     final ip = context.read<InternetProvider>();
@@ -433,6 +434,41 @@ class _LoginPageState extends State<LoginPage> {
         if (sp.hasError == true) {
           openSnackbar(context, sp.errorCode.toString(), Colors.red);
           //facebookController.reset();
+        } else {
+          // checking whether user exists or not
+          sp.checkUserExists().then((value) async {
+            if (value == true) {
+              // user exists
+              await sp.getUserDataFromFirestore(sp.uid).then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            } else {
+              // user does not exist
+              sp.saveDataToFirestore().then((value) => sp
+                  .saveDataToSharedPreferences()
+                  .then((value) => sp.setSignIn().then((value) {
+                        handleAfterSignIn();
+                      })));
+            }
+          });
+        }
+      });
+    }
+  }
+
+  Future handleGithubAuth() async {
+    final sp = context.read<SignInProvider>();
+    final ip = context.read<InternetProvider>();
+    await ip.checkInternetConnection();
+
+    if (ip.hasInternet == false) {
+      openSnackbar(context, "Check your Internet connection", Colors.red);
+    } else {
+      await sp.signInWithGitHub().then((value) {
+        if (sp.hasError == true) {
+          openSnackbar(context, sp.errorCode.toString(), Colors.red);
         } else {
           // checking whether user exists or not
           sp.checkUserExists().then((value) async {

@@ -43,7 +43,9 @@
                 <!-- Accepts URIs that begin with "example://gizmos” -->
                 <!-- Registered Callback URLs in TwitterApp -->
                 <data
-                    android:scheme="loginapp" /> <!-- host is option -->
+                    android:scheme="loginapp"
+                    android:host="oauth"
+                    /> <!-- host is option -->
             </intent-filter>
         </activity>
 
