@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:login_app/screens/home_screen.dart';
 import 'package:login_app/utils/next_screen.dart';
@@ -12,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../provider/internet_provider.dart';
 import '../provider/sign_in_provider.dart';
+import 'package:http/http.dart' as http;
 import '../utils/config.dart';
 import '../utils/next_screen.dart';
 import '../utils/snack_bar.dart';
@@ -30,6 +34,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController twitterController = TextEditingController();
   final TextEditingController googleController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final String clientId = 'Ov23liHKOnNzkWkLgVMi'; // Your GitHub client ID
+  final String clientSecret =
+      'aa3b4838843b0ec835bd5adcb5a60bed0a130604'; // Your GitHub client secret
+  final String redirectUri =
+      'https://loginapp-87017.firebaseapp.com/__/auth/handler'; // Your Firebase redirect URI
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                           handleFacebookAuth),
                       _buildSocialMediaButton(
                           'assets/images/googlelogo.png', handleGoogleSignIn),
-                      _buildSocialMediaButton(
-                          'assets/images/github.png', handleGoogleSignIn),
+                      _buildSocialMediaButton('assets/images/github.png',
+                          signInWithGitHub as VoidCallback),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -444,6 +454,52 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
       });
+    }
+  }
+
+  Future signInWithGitHub() async {
+    // Generate the GitHub authentication URL
+    final String url =
+        'https://github.com/login/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&scope=read:user%20user:email';
+
+    try {
+      // Start the authentication flow
+      final result = await FlutterWebAuth.authenticate(
+          url: url, callbackUrlScheme: "https");
+
+      // Extract the code from the callback URL
+      final code = Uri.parse(result).queryParameters['code'];
+
+      // Exchange the code for an access token
+      final response = await http.post(
+        Uri.parse('https://github.com/login/oauth/access_token'),
+        headers: {'Accept': 'application/json'},
+        body: {
+          'client_id': clientId,
+          'client_secret': clientSecret,
+          'code': code,
+          'redirect_uri': redirectUri,
+        },
+      );
+
+      final accessToken = json.decode(response.body)['access_token'];
+
+      // Use the access token to sign in with Firebase
+      final githubAuthCredential = GithubAuthProvider.credential(accessToken);
+
+      await FirebaseAuth.instance.signInWithCredential(githubAuthCredential);
+
+      // Handle successful sign-in
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signed in with GitHub!')),
+      );
+      // Call handleAfterSignIn method
+      handleAfterSignIn();
+    } catch (e) {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error signing in with GitHub: $e')),
+      );
     }
   }
 
