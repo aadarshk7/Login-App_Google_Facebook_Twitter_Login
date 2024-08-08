@@ -1,6 +1,6 @@
 # LoginApp Application
 Live here-https://aadarshk7.github.io/Login-App_Google_Facebook_Twitter_Login/
-<h4>Flutter project, Login_App! 
+<h4>Flutter project, Login_App 
   Featuring Animations, State management(provider), Firebase Authentication, Shared Preferences, Social Media and database integration.</h4>
 <h2> Splash Screen Using LineGradient</h2>
 <p> <img src="https://raw.githubusercontent.com/aadarshk7/Login-App_Google_Facebook_Twitter_Login/master/assets/screenshots/splashscreen.jpg" height = 555 width=333/> </p>
