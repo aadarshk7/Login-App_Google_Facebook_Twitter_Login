@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 // Center(
-                //   child: Text('Welcome, $userName!!'),
+                //   child: Text('Welcome Namaste, $userName!!'),
                 // ),
               ],
             ),
