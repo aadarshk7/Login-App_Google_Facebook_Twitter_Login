@@ -8,6 +8,7 @@ void openSnackbar(context, snackMessage, color) {
         textColor: Colors.white,
         onPressed: () {},
       ),
+    //
       content: Text(
         snackMessage,
         style: const TextStyle(fontSize: 14),
